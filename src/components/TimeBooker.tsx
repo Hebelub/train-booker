@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
-import ClassBookingCard from './ClassBookingCard'
+import SessionBookingCard from './SessionBookingCard'
 
 function TimeBooker() {
 
@@ -28,7 +28,7 @@ function TimeBooker() {
                     
                         <ScrollArea className="h-full">
                             {Array.from({ length: 24 }, (_, index) => (
-                                <ClassBookingCard 
+                                <SessionBookingCard 
                                     key={index} 
                                     id={index.toString()} 
                                     startTime={new Date()} 

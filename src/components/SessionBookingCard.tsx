@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
+import Link from 'next/link';
 
 function convertToHoursAndMinutes(number: number) {
     const hours = Math.floor(number); // Gets the whole hour part
@@ -50,33 +51,35 @@ function ClockIcon() {
     )
 }
 
-function ClassBookingCard(props: ClassBookingCardProps) {
+function SessionBookingCard(props: ClassBookingCardProps) {
     const formattedStartTime = props.startTime.toLocaleTimeString('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
     });
-    
+
     return (
-        <Card>
-            <CardHeader>
-                <CardDescription className="flex items-center gap-2">
-                    <span>{formattedStartTime}</span>
-                </CardDescription>
-                <CardTitle>{props.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-center gap-2">
-                    <UserIcon />
-                    <span>{props.instructorName}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <ClockIcon />
-                    <span>{convertToHoursAndMinutes(props.duration)}</span>
-                </div>
-            </CardContent>
-        </Card>
+        <Link href={`/classes/${props.id}`} passHref className="no-underline hover:no-underline">
+            <Card>
+                <CardHeader>
+                    <CardDescription className="flex items-center gap-2">
+                        <span>{formattedStartTime}</span>
+                    </CardDescription>
+                    <CardTitle>{props.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center gap-2">
+                        <UserIcon />
+                        <span>{props.instructorName}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <ClockIcon />
+                        <span>{convertToHoursAndMinutes(props.duration)}</span>
+                    </div>
+                </CardContent>
+            </Card>
+        </Link>
     );
 }
 
-export default ClassBookingCard;
+export default SessionBookingCard;
