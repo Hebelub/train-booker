@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
 import SessionBookingCard from './SessionBookingCard'
 
-function TimeBooker() {
+function SessionBooker() {
 
     const [date, setDate] = useState<Date | undefined>(new Date())
 
@@ -37,6 +37,8 @@ function TimeBooker() {
                                     description="A relaxing yoga class" 
                                     location="Yoga Studio" 
                                     instructorName="John Doe"
+                                    maxAttendees={10}
+                                    attendees={[]}
                                 />
                             ))}
                         </ScrollArea>
@@ -48,4 +50,4 @@ function TimeBooker() {
     )
 }
 
-export default TimeBooker
+export default SessionBooker

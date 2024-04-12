@@ -25,7 +25,13 @@ function convertToHoursAndMinutes(number: number) {
     return result || "0 minutes"; // Return "0 minutes" if the input was 0 or something that rounds down to 0
 }
 
-interface ClassBookingCardProps {
+interface Attendee {
+    id: string;
+    name: string;
+    email: string;
+}
+
+interface SessionBookingCardProps {
     id: string;
     startTime: Date;
     duration: number;
@@ -33,6 +39,8 @@ interface ClassBookingCardProps {
     description: string;
     location: string;
     instructorName: string;
+    maxAttendees: number;
+    attendees: Attendee[];
 }
 
 function UserIcon() {
@@ -51,7 +59,7 @@ function ClockIcon() {
     )
 }
 
-function SessionBookingCard(props: ClassBookingCardProps) {
+function SessionBookingCard(props: SessionBookingCardProps) {
     const formattedStartTime = props.startTime.toLocaleTimeString('en-GB', {
         hour: '2-digit',
         minute: '2-digit',
@@ -59,7 +67,7 @@ function SessionBookingCard(props: ClassBookingCardProps) {
     });
 
     return (
-        <Link href={`/classes/${props.id}`} passHref className="no-underline hover:no-underline">
+        <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
             <Card>
                 <CardHeader>
                     <CardDescription className="flex items-center gap-2">

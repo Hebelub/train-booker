@@ -1,9 +1,9 @@
-import TimeBooker from "@/components/TimeBooker";
+import SessionBooker from "@/components/SessionBooker";
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <TimeBooker />
+      <SessionBooker />
     </main>
   );
 }
