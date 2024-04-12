@@ -1,7 +1,7 @@
 import Link from "next/link"
 import Image from "next/image";
 import { SignInButton, SignedOut, UserButton } from "@clerk/nextjs";
-// import { ThemeToggler } from "./ThemeToggler";
+import { ThemeToggler } from "./ThemeToggler";
 
 function Header() {
   return (
@@ -21,7 +21,7 @@ function Header() {
 
         <div className="px-5 flex space-x-2 items-center">
             {/* Theme toggler */}
-            {/* <ThemeToggler /> */}
+            <ThemeToggler />
 
             {/* User Button */}
             <UserButton afterSignOutUrl="/sessions" />
