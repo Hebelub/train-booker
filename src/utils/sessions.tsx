@@ -8,26 +8,46 @@ import {
     getDoc, 
     addDoc, 
     updateDoc, 
-    deleteDoc 
+    deleteDoc,
+    Timestamp
 } from "firebase/firestore";
 
 const db = getFirestore(app);
 const sessionsCollection = collection(db, "sessions");
 
+const convertTimestamps = (session: any): Session => {
+    const convertedSession = { ...session };
+    // Convert all Timestamp fields to Date
+    if (convertedSession.startTime && convertedSession.startTime instanceof Timestamp) {
+        convertedSession.startTime = convertedSession.startTime.toDate();
+    }
+    return convertedSession as Session;
+};
+
 // Get all sessions
 const getSessions = async (): Promise<Session[]> => {
     const snapshot = await getDocs(sessionsCollection);
-    return snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id
-    } as Session));
+    return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            ...convertTimestamps(data),  // Convert timestamps to Date objects
+            id: doc.id
+        } as Session;
+    });
 };
 
 // Get a single session by ID
 const getSessionById = async (id: string): Promise<Session | undefined> => {
     const sessionDoc = doc(db, "sessions", id);
     const docSnap = await getDoc(sessionDoc);
-    return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as Session : undefined;
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+            ...convertTimestamps(data),  // Convert timestamps to Date objects
+            id: docSnap.id
+        } as Session;
+    }
+    return undefined;
 };
 
 // Add a new session

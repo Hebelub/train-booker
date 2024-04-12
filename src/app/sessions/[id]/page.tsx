@@ -4,6 +4,7 @@ import { getSessionById } from '@/utils/sessions';
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
+import { Button } from "@/components/ui/button";
 
 function SessionPage() {
   const pathname = usePathname();
@@ -27,10 +28,16 @@ function SessionPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-between p-24">
-      We are now in a session with ID: {id}
-      {/* Example of displaying a session detail */}
-      <p>Session Name: {session.name}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 space-y-4">
+      <h1 className="text-2xl font-bold">{session.name}</h1>
+      <p><strong>Description:</strong> {session.description}</p>
+      <p><strong>Start Time:</strong> {new Date(session.startTime).toLocaleString()}</p>
+      <p><strong>Instructor:</strong> {session.instructorName}</p>
+      <p><strong>Duration:</strong> {session.duration} hours</p>
+      <p><strong>Location:</strong> {session.location}</p>
+      <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
+
+      <Button>Join Session</Button>
     </div>
   );
 }
