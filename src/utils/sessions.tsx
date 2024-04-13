@@ -9,7 +9,9 @@ import {
     addDoc, 
     updateDoc, 
     deleteDoc,
-    Timestamp
+    Timestamp,
+    arrayUnion,
+    arrayRemove
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -66,6 +68,22 @@ const updateSession = async (id: string, session: Partial<Session>): Promise<voi
 const deleteSession = async (id: string): Promise<void> => {
     const sessionDoc = doc(db, "sessions", id);
     await deleteDoc(sessionDoc);
+};
+
+// Function to book a session
+export const bookSession = async (sessionId: string, userId: string): Promise<void> => {
+    const sessionDocRef = doc(db, "sessions", sessionId);
+    await updateDoc(sessionDocRef, {
+        attendeeIds: arrayUnion(userId) // Adds userId to the attendeeIds array
+    });
+};
+
+// Function to unbook a session
+export const unbookSession = async (sessionId: string, userId: string): Promise<void> => {
+    const sessionDocRef = doc(db, "sessions", sessionId);
+    await updateDoc(sessionDocRef, {
+        attendeeIds: arrayRemove(userId) // Removes userId from the attendeeIds array
+    });
 };
 
 export { getSessions, getSessionById, addSession, updateSession, deleteSession };
