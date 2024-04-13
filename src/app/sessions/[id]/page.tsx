@@ -5,29 +5,45 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
-import { useAuth } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
+import firebase from '@/utils/firebase';
+import app from '@/utils/firebase';
+import { getAuth, signInWithCustomToken } from 'firebase/auth';
+
+
+const auth = getAuth(app);
 
 function SessionPage() {
+
   const pathname = usePathname();
   const sessionId = pathname.split('/')[2];
 
-  const { userId } = useAuth();
+  const { userId, getToken } = useAuth();
 
   const [session, setSession] = useState<Session | null>(null);
   const [isBooked, setIsBooked] = useState(false);
 
   useEffect(() => {
-    if (sessionId) {
-      getSessionById(sessionId).then(result => {
-        if (result) {
-          setSession(result);
-          setIsBooked(result.attendeeIds.includes(userId ?? ''));
-        } else {
-          setSession(null);
-        }
-      });
+
+    const retrieveSession = async () => {
+
+      const token = await getToken({ template: "integration_firebase" });
+      await signInWithCustomToken(auth, token || "");
+
+      if (sessionId) {
+        getSessionById(sessionId).then(result => {
+          if (result) {
+            setSession(result);
+            setIsBooked(result.attendeeIds.includes(userId ?? ''));
+          } else {
+            setSession(null);
+          }
+        });
+      }
     }
+
+    retrieveSession();
   }, [sessionId, userId]);
 
   const handleBookingChange = () => {
