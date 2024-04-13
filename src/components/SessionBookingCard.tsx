@@ -36,7 +36,7 @@ function SessionBookingCard(props: Session) {
 
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
-            <Card>
+            <Card className="">
                 <CardHeader>
                     <CardDescription className="flex items-center gap-2">
                         <span>{formattedStartTime}</span>
