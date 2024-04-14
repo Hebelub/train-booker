@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import SessionBookingCard from './SessionBookingCard';
+import SessionListItem from './SessionListItem';
 import { getSessions } from '@/utils/sessions';
 import { Session } from '@/types/Session';
 
@@ -29,7 +29,7 @@ function SessionBooker() {
                 <ScrollArea className="h-full">
                     {sessions.map((session, index) => (
                         <div className="">
-                            <SessionBookingCard
+                            <SessionListItem
                                 key={index}
                                 {...session}
                             />

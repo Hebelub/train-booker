@@ -7,7 +7,7 @@ import { Session } from '@/types/Session';
 import { UserIcon, ClockIcon, LocationIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
 
-function SessionBookingCard(props: Session) {
+function SessionListItem(props: Session) {
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
             <Card className="">
@@ -29,4 +29,4 @@ function SessionBookingCard(props: Session) {
     );
 }
 
-export default SessionBookingCard;
+export default SessionListItem;
