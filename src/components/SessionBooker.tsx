@@ -28,8 +28,8 @@ function SessionBooker() {
             </div>
             <div className="flex-1 rounded-md overflow-y-auto">
                 <ScrollArea className="h-full">
-                    {sessions.map((session, index) => (
-                        <div key={index}>
+                    {sessions.map((session) => (
+                        <div key={session.id}>
                             <SessionListItem
                                 {...session}
                             />
