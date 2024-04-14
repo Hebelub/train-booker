@@ -29,17 +29,16 @@ function SessionBooker() {
             <div className="flex-1 rounded-md overflow-y-auto">
                 <ScrollArea className="h-full">
                     {sessions.map((session, index) => (
-                        <div className="">
+                        <div key={index}>
                             <SessionListItem
-                                key={index}
                                 {...session}
                             />
                             <Separator className="my-2" />
                         </div>
                     ))}
                 </ScrollArea>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 
