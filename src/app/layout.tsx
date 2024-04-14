@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
 import Header from "@/components/Header";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import ClientSideAuthHandler from "@/components/ClientSideAuthHandler";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
+      <ClientSideAuthHandler />
       <html lang="en">
         <body className={inter.className}>
 

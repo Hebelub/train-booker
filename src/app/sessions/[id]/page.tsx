@@ -7,22 +7,16 @@ import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
 import { useAuth, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
-import firebase from '@/utils/firebase';
-import app from '@/utils/firebase';
-import { getAuth, signInWithCustomToken } from 'firebase/auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
-
-
-const auth = getAuth(app);
 
 function SessionPage() {
 
   const pathname = usePathname();
   const sessionId = pathname.split('/')[2];
 
-  const { userId, getToken } = useAuth();
+  const { userId } = useAuth();
 
   const [session, setSession] = useState<Session | null>(null);
   const [isBooked, setIsBooked] = useState(false);
@@ -30,9 +24,6 @@ function SessionPage() {
   useEffect(() => {
 
     const retrieveSession = async () => {
-
-      const token = await getToken({ template: "integration_firebase" });
-      await signInWithCustomToken(auth, token || "");
 
       if (sessionId) {
         getSessionById(sessionId).then(result => {
@@ -47,7 +38,7 @@ function SessionPage() {
     }
 
     retrieveSession();
-  }, [sessionId, userId, getToken]);
+  }, [sessionId, userId]);
 
   const handleBookingChange = () => {
     if (isBooked) {

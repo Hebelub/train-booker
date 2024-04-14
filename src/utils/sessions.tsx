@@ -53,7 +53,7 @@ const getSessionById = async (id: string): Promise<Session | undefined> => {
 };
 
 // Add a new session
-const addSession = async (session: Omit<Session, 'id'>): Promise<string> => {
+const addSession = async (session: Omit<Session, 'id' | 'attendeeIds'>): Promise<string> => {
     const docRef = await addDoc(sessionsCollection, session);
     return docRef.id; // Return the new session ID
 };
