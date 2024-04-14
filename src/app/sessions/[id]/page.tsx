@@ -10,6 +10,8 @@ import SessionBookingControls from '@/components/SessionBookingControls';
 import firebase from '@/utils/firebase';
 import app from '@/utils/firebase';
 import { getAuth, signInWithCustomToken } from 'firebase/auth';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ClockIcon, LocationIcon, UserIcon } from '@/utils/icons';
 
 
 const auth = getAuth(app);
@@ -74,21 +76,42 @@ function SessionPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-24 space-y-4">
-      <h1 className="text-2xl font-bold">{session.name}</h1>
-      <p><strong>Description:</strong> {session.description}</p>
-      <p><strong>Start Time:</strong> {new Date(session.startTime).toLocaleString()}</p>
-      <p><strong>Instructor:</strong> {session.instructorName}</p>
-      <p><strong>Duration:</strong> {session.duration} hours</p>
-      <p><strong>Location:</strong> {session.location}</p>
-      <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
+      <Card className="p-4 items-center max-w-[400px]">
 
-      <SessionBookingControls
-        sessionId={sessionId}
-        userId={userId || null}
-        isBooked={isBooked}
-        onBookingChange={handleBookingChange}
-      />
+        <CardHeader>
+          <CardTitle>{session.name}</CardTitle>
+          <CardDescription className="flex items-center gap-2">
+            <span>{session.description}</span>
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <UserIcon />
+            <span>{session.instructorName}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <ClockIcon />
+            <span>{session.duration} hours</span>
+          </div>
+          <p><strong>Start Time:</strong> {new Date(session.startTime).toLocaleString()}</p>
+          <div className="flex items-center gap-2">
+            <LocationIcon />
+            <span>{session.location}</span>
+          </div>
+          <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
+        </CardContent>
+
+        <CardFooter>
+          <SessionBookingControls
+            sessionId={sessionId}
+            userId={userId || null}
+            isBooked={isBooked}
+            onBookingChange={handleBookingChange}
+          />
+        </CardFooter>
+      </Card>
     </div>
   );
 }
