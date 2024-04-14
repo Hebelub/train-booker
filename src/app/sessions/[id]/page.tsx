@@ -15,14 +15,15 @@ import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
 
 
-const auth = getAuth(app);
+// const auth = getAuth(app);
 
 function SessionPage() {
 
   const pathname = usePathname();
   const sessionId = pathname.split('/')[2];
 
-  const { userId, getToken } = useAuth();
+  // const { userId, getToken } = useAuth();
+  const userId = "test-user-id"
 
   const [session, setSession] = useState<Session | null>(null);
   const [isBooked, setIsBooked] = useState(false);
@@ -31,8 +32,8 @@ function SessionPage() {
 
     const retrieveSession = async () => {
 
-      const token = await getToken({ template: "integration_firebase" });
-      await signInWithCustomToken(auth, token || "");
+      // const token = await getToken({ template: "integration_firebase" });
+      // await signInWithCustomToken(auth, token || "");
 
       if (sessionId) {
         getSessionById(sessionId).then(result => {
