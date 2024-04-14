@@ -77,7 +77,7 @@ function SessionPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
+    <div className="flex h-[calc(100vh-75px)] flex-col items-center justify-center space-y-4">
       <Card className="p-4 items-center max-w-[400px]">
 
         <CardHeader>
