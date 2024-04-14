@@ -11,7 +11,8 @@ import firebase from '@/utils/firebase';
 import app from '@/utils/firebase';
 import { getAuth, signInWithCustomToken } from 'firebase/auth';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClockIcon, LocationIcon, UserIcon } from '@/utils/icons';
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from '@/utils/icons';
+import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
 
 
 const auth = getAuth(app);
@@ -88,17 +89,17 @@ function SessionPage() {
 
         <CardContent>
           <div className="flex items-center gap-2">
-            <UserIcon />
-            <span>{session.instructorName}</span>
-          </div>
-          <div className="flex items-center gap-2">
             <ClockIcon />
-            <span>{session.duration} hours</span>
+            <span>{formatDate(session.startTime) + ", " + formatTime(session.startTime)}</span>
           </div>
-          <p><strong>Start Time:</strong> {new Date(session.startTime).toLocaleString()}</p>
+          <span><strong>Duration: </strong>{convertToHoursAndMinutes(session.duration)}</span>
           <div className="flex items-center gap-2">
             <LocationIcon />
             <span>{session.location}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <UserIcon />
+            <span>{session.instructorName}</span>
           </div>
           <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
         </CardContent>
@@ -114,6 +115,6 @@ function SessionPage() {
       </Card>
     </div>
   );
-}
+} 
 
 export default SessionPage;
