@@ -10,17 +10,21 @@ import { addSession } from "@/utils/sessions"
 import app from "@/utils/firebase"
 import { useUser } from "@clerk/clerk-react"
 
-function SessionForm(props?: Session) {
+interface SessionFormProps {
+    session?: Session
+}
+
+function SessionForm({ session }: SessionFormProps) {
 
     const user = useUser();
 
-    const [name, setName] = useState(props?.name || '');
-    const [description, setDescription] = useState(props?.description || '');
-    const [startTime, setStartTime] = useState(props?.startTime || new Date());
-    const [duration, setDuration] = useState(props?.duration || 0);
-    const [location, setLocation] = useState(props?.location || '');
-    const [instructorName, setInstructorName] = useState(props?.instructorName || '');
-    const [maxAttendees, setMaxAttendees] = useState(props?.maxAttendees || 0);
+    const [name, setName] = useState(session?.name || '');
+    const [description, setDescription] = useState(session?.description || '');
+    const [startTime, setStartTime] = useState(session?.startTime || new Date());
+    const [duration, setDuration] = useState(session?.duration || 0);
+    const [location, setLocation] = useState(session?.location || '');
+    const [instructorName, setInstructorName] = useState(session?.instructorName || '');
+    const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 0);
 
     // Example of how you might handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
