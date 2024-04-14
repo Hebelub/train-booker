@@ -80,10 +80,12 @@ function SessionPage() {
 
         <CardContent>
           <div className="flex items-center gap-2">
-            <ClockIcon />
+            <CalendarIcon />
             <span>{formatDate(session.startTime) + ", " + formatTime(session.startTime)}</span>
           </div>
-          <span><strong>Duration: </strong>{convertToHoursAndMinutes(session.duration)}</span>
+          <div className="flex items-center gap-2">
+            <ClockIcon />{convertToHoursAndMinutes(session.duration)}
+          </div>
           <div className="flex items-center gap-2">
             <LocationIcon />
             <span>{session.location}</span>
@@ -106,6 +108,6 @@ function SessionPage() {
       </Card>
     </div>
   );
-} 
+}
 
 export default SessionPage;

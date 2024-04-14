@@ -4,7 +4,7 @@ import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
 import Link from 'next/link';
 import { Session } from '@/types/Session';
-import { UserIcon, ClockIcon, LocationIcon } from '@/utils/icons';
+import { UserIcon, CalendarIcon, ClockIcon, LocationIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
 
 function SessionListItem(props: Session) {
@@ -16,7 +16,7 @@ function SessionListItem(props: Session) {
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center gap-2">
-                        <ClockIcon />
+                        <CalendarIcon />
                         <span>{formatDate(props.startTime) + ", " + formatTime(props.startTime)}</span>
                     </div>
                     <div className="flex items-center gap-2">
