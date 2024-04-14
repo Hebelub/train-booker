@@ -47,7 +47,7 @@ function SessionPage() {
     }
 
     retrieveSession();
-  }, [sessionId, userId]);
+  }, [sessionId, userId, getToken]);
 
   const handleBookingChange = () => {
     if (isBooked) {
