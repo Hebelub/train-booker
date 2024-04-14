@@ -10,7 +10,7 @@ import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils'
 function SessionListItem(props: Session) {
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
-            <Card className="">
+            {/* <Card className="bg-transparent border-none"> */}
                 <CardHeader>
                     <CardTitle>{props.name}</CardTitle>
                 </CardHeader>
@@ -24,7 +24,7 @@ function SessionListItem(props: Session) {
                         <span>{props.instructorName}</span>
                     </div>
                 </CardContent>
-            </Card>
+            {/* </Card> */}
         </Link>
     );
 }

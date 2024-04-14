@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import SessionListItem from './SessionListItem';
 import { getSessions } from '@/utils/sessions';
 import { Session } from '@/types/Session';
@@ -33,6 +34,7 @@ function SessionBooker() {
                                 key={index}
                                 {...session}
                             />
+                            <Separator className="my-2" />
                         </div>
                     ))}
                 </ScrollArea>
