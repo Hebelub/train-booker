@@ -3,15 +3,15 @@
 import { Session } from "@/types/Session"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from "@/utils/icons"
-import { formatDate, formatTime, convertToHoursAndMinutes } from "@/utils/utils"
+import { ClockIcon, LocationIcon, UserIcon } from "@/utils/icons"
 import { useState } from "react"
 import { addSession } from "@/utils/sessions"
-import app from "@/utils/firebase"
 import { useUser } from "@clerk/clerk-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
+
 
 interface SessionFormProps {
     session?: Session
@@ -20,6 +20,7 @@ interface SessionFormProps {
 function SessionForm({ session }: SessionFormProps) {
 
     const user = useUser();
+    const { toast } = useToast()
 
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
@@ -30,7 +31,6 @@ function SessionForm({ session }: SessionFormProps) {
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 0);
 
-    // Example of how you might handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -46,13 +46,20 @@ function SessionForm({ session }: SessionFormProps) {
             maxAttendees
         };
 
-        console.log("app.name", user.isSignedIn); // This will show the current user details if logged in
-
-
         try {
             const sessionId = await addSession(newSession);
+            toast({
+                title: "Success",
+                description: `Session created with ID: ${sessionId}`,
+                status: "success"
+            });
             console.log("Session created with ID:", sessionId);
         } catch (error) {
+            toast({
+                title: "Error",
+                description: "Error adding session",
+                status: "error"
+            });
             console.error("Error adding session:", error);
         }
     };
