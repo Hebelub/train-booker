@@ -28,7 +28,6 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
             toast({
                 title: "Booking Successful",
                 description: `You have successfully booked the session.`,
-                status: "success"
             });
         } catch (err) {
             console.error(err);
@@ -37,7 +36,6 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
             toast({
                 title: "Booking Failed",
                 description: 'Failed to book the session.',
-                status: "error"
             });
         }
     };
@@ -50,8 +48,7 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
             setLoading(false);
             toast({
                 title: "Unbooking Successful",
-                description: `You have successfully unbooked the session.`,
-                status: "success"
+                description: `You have successfully unbooked the session.`
             });
         } catch (err) {
             console.error(err);
@@ -59,8 +56,7 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
             setLoading(false);
             toast({
                 title: "Unbooking Failed",
-                description: 'Failed to unbook the session.',
-                status: "error"
+                description: 'Failed to unbook the session.'
             });
         }
     };
