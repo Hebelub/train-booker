@@ -44,3 +44,16 @@ export function formatTime(date: Date): string {
 
     return `${formattedHours}:${formattedMinutes}`; // Returns the time as "16:45"
 }
+
+export function isUserIdAdmin(userId: string): boolean {
+    const adminUidsString = process.env.NEXT_PUBLIC_ADMIN_UIDS;
+
+    // Check if the environment variable is set
+    if (!adminUidsString) {
+        console.warn('NEXT_PUBLIC_ADMIN_UIDS is not set in the environment.');
+        return false;
+    }
+
+    const adminUids = adminUidsString.split(',');
+    return adminUids.includes(userId);
+}

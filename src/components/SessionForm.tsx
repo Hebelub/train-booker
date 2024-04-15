@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { ClockIcon, LocationIcon, UserIcon } from "@/utils/icons"
 import { useState } from "react"
-import { addSession } from "@/utils/sessions"
+import { addSession, updateSession } from "@/utils/sessions"
 import { useUser } from "@clerk/clerk-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,12 +15,16 @@ import { useToast } from "@/components/ui/use-toast"
 
 interface SessionFormProps {
     session?: Session
+    mode: 'add' | 'update';
+    onUpdate?: (updatedSession: Partial<Session>) => void;
 }
 
-function SessionForm({ session }: SessionFormProps) {
+function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
 
     const user = useUser();
     const { toast } = useToast()
+
+    const submitButtonText = mode === 'update' ? 'Confirm Edit' : 'Submit Session';
 
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
@@ -36,7 +40,7 @@ function SessionForm({ session }: SessionFormProps) {
 
         const duration = hours * 60 + minutes;
 
-        const newSession = {
+        const sessionDetails = {
             name,
             description,
             startTime,
@@ -47,26 +51,39 @@ function SessionForm({ session }: SessionFormProps) {
         };
 
         try {
-            const sessionId = await addSession(newSession);
-            toast({
-                title: "Success",
-                description: `Session created with ID: ${sessionId}`,
-                status: "success"
-            });
-            console.log("Session created with ID:", sessionId);
+            if (mode === 'add') {
+                const sessionId = await addSession(sessionDetails);
+                toast({
+                    title: "Success",
+                    description: `Session created with ID: ${sessionId}`,
+                    status: "success"
+                });
+                console.log("Session created with ID:", sessionId);
+            } else if (mode === 'update' && session?.id) {
+                await updateSession(session?.id, sessionDetails);
+                if (onUpdate) {
+                    onUpdate(sessionDetails)
+                }
+                toast({
+                    title: "Success",
+                    description: "Session was successfully edited",
+                    status: "success"
+                });
+                console.log("Session updated:", session?.id);
+            }
         } catch (error) {
             toast({
                 title: "Error",
-                description: "Error adding session",
+                description: `Error ${mode === 'add' ? 'adding' : 'updating'} session`,
                 status: "error"
             });
-            console.error("Error adding session:", error);
+            console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} session:`, error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex h-[calc(100vh-75px)] flex-col items-center justify-center space-y-4">
-            <Card className="p-4 items-center max-w-[400px]">
+        <form onSubmit={handleSubmit} className="">
+            <Card className="p-4 items-center max-w-[500px]">
                 <CardHeader>
                     <CardTitle>
                         <Input
@@ -156,7 +173,7 @@ function SessionForm({ session }: SessionFormProps) {
                 </CardContent>
 
                 <CardFooter>
-                    <Button type="submit">Submit Session</Button>
+                    <Button type="submit">{submitButtonText}</Button>
                 </CardFooter>
             </Card>
         </form>

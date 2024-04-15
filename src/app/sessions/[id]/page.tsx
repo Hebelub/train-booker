@@ -9,7 +9,11 @@ import { useAuth, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon } from '@/utils/icons';
-import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
+import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
+import { Separator } from '@radix-ui/react-dropdown-menu';
+import { useRouter } from 'next/navigation';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import SessionForm from '@/components/SessionForm';
 
 function SessionPage() {
 
@@ -17,9 +21,13 @@ function SessionPage() {
   const sessionId = pathname.split('/')[2];
 
   const { userId } = useAuth();
+  const isAdmin = isUserIdAdmin(userId || '');
+  const router = useRouter();
 
   const [session, setSession] = useState<Session | null>(null);
   const [isBooked, setIsBooked] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
 
@@ -52,6 +60,20 @@ function SessionPage() {
     }
   };
 
+  const handleUpdateSession = (updatedSession: Partial<Session>) => {
+    setIsDialogOpen(false);
+    
+    if (session) {
+      // Safely combine the existing session with updated fields
+      const newSession: Session = { ...session, ...updatedSession };
+      setSession(newSession);
+    } else {
+      // Handle the case where there is no existing session to update
+      // Options: set to null, use defaults, or skip
+      console.log("No existing session to update.");
+    }
+  };
+
   useEffect(() => {
     if (sessionId) {
       // Fetch session by ID, then check the result before setting state
@@ -69,43 +91,69 @@ function SessionPage() {
 
   return (
     <div className="flex h-[calc(100vh-75px)] flex-col items-center justify-center space-y-4">
-      <Card className="p-4 items-center max-w-[400px]">
+      <div className="items-center">
 
-        <CardHeader>
-          <CardTitle>{session.name}</CardTitle>
-          <CardDescription className="flex items-center gap-2">
-            <span>{session.description}</span>
-          </CardDescription>
-        </CardHeader>
+        <Card className="p-4 items-center">
+          <CardHeader>
+            <CardTitle>{session.name}</CardTitle>
+            <CardDescription className="flex items-center gap-2">
+              <span>{session.description}</span>
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <CalendarIcon />
-            <span>{formatDate(session.startTime) + ", " + formatTime(session.startTime)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <ClockIcon />{convertToHoursAndMinutes(session.duration)}
-          </div>
-          <div className="flex items-center gap-2">
-            <LocationIcon />
-            <span>{session.location}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <UserIcon />
-            <span>{session.instructorName}</span>
-          </div>
-          <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
-        </CardContent>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <CalendarIcon />
+              <span>{formatDate(session.startTime) + ", " + formatTime(session.startTime)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ClockIcon />{convertToHoursAndMinutes(session.duration)}
+            </div>
+            <div className="flex items-center gap-2">
+              <LocationIcon />
+              <span>{session.location}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <UserIcon />
+              <span>{session.instructorName}</span>
+            </div>
+            <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
+          </CardContent>
 
-        <CardFooter>
-          <SessionBookingControls
-            sessionId={sessionId}
-            userId={userId || null}
-            isBooked={isBooked}
-            onBookingChange={handleBookingChange}
-          />
-        </CardFooter>
-      </Card>
+          <CardFooter>
+            <SessionBookingControls
+              sessionId={sessionId}
+              userId={userId || null}
+              isBooked={isBooked}
+              onBookingChange={handleBookingChange}
+            />
+          </CardFooter>
+        </Card>
+
+        {/* Admin section */}
+        {isAdmin && (
+          <div className="mt-4 w-full">
+            <Separator />
+            <span className="text-center text-sm text-gray-500 mt-4">Admin Section</span>
+
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className='w-full'>Edit Session</Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Edit Session</DialogTitle>
+                  <DialogDescription>
+                    Modify the session details below.
+                  </DialogDescription>
+                </DialogHeader>
+                <SessionForm session={session} mode="update" onUpdate={handleUpdateSession} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
