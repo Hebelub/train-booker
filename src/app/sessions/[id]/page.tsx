@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { useAuth, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon } from '@/utils/icons';
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import SessionForm from '@/components/SessionForm';
+import { deleteSession } from '@/utils/sessions';
+import DeletionDialog from '@/components/DeletionDialog';
+import { useToast } from '@/components/ui/use-toast';
 
 function SessionPage() {
 
@@ -27,7 +30,10 @@ function SessionPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [isBooked, setIsBooked] = useState(false);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const { toast } = useToast();
 
   useEffect(() => {
 
@@ -48,6 +54,16 @@ function SessionPage() {
     retrieveSession();
   }, [sessionId, userId]);
 
+  useEffect(() => {
+    if (sessionId) {
+      // Fetch session by ID, then check the result before setting state
+      getSessionById(sessionId).then(result => {
+        // Only set the state if result is not undefined
+        setSession(result ?? null); // Use null if result is undefined
+      });
+    }
+  }, [sessionId]);
+
   const handleBookingChange = () => {
     if (isBooked) {
       unbookSession(sessionId, userId ?? '').then(() => {
@@ -61,8 +77,8 @@ function SessionPage() {
   };
 
   const handleUpdateSession = (updatedSession: Partial<Session>) => {
-    setIsDialogOpen(false);
-    
+    setIsEditDialogOpen(false);
+
     if (session) {
       // Safely combine the existing session with updated fields
       const newSession: Session = { ...session, ...updatedSession };
@@ -74,15 +90,25 @@ function SessionPage() {
     }
   };
 
-  useEffect(() => {
-    if (sessionId) {
-      // Fetch session by ID, then check the result before setting state
-      getSessionById(sessionId).then(result => {
-        // Only set the state if result is not undefined
-        setSession(result ?? null); // Use null if result is undefined
+  const handleDeleteSession = async () => {
+    try {
+      await deleteSession(session?.id || "");
+      toast({
+        title: "Success",
+        description: "Session deleted successfully.",
+        status: "success"
+      });
+      router.push('/sessions'); // Navigate back to the sessions listing
+    } catch (error) {
+      console.error("Error deleting session:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the session.",
+        status: "error"
       });
     }
-  }, [sessionId]);
+  };
+
 
   // Handling display of session details or a loading message
   if (!session) {
@@ -134,24 +160,35 @@ function SessionPage() {
         {isAdmin && (
           <div className="mt-4 w-full">
             <Separator />
-            <span className="text-center text-sm text-gray-500 mt-4">Admin Section</span>
+            <div className="w-full">
+              <span className="text-center text-sm text-gray-500 mt-4">Admin Section</span>
+            </div>
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className='w-full'>Edit Session</Button>
-              </DialogTrigger>
+            <div className="flex">
+              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogTrigger asChild className="mr-2">
+                  <Button className="flex items-center gap-2"><EditIcon />Edit Session</Button>
+                </DialogTrigger>
 
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Edit Session</DialogTitle>
-                  <DialogDescription>
-                    Modify the session details below.
-                  </DialogDescription>
-                </DialogHeader>
-                <SessionForm session={session} mode="update" onUpdate={handleUpdateSession} />
-              </DialogContent>
-            </Dialog>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Session</DialogTitle>
+                    <DialogDescription>
+                      Modify the session details below.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <SessionForm session={session} mode="update" onUpdate={handleUpdateSession} />
+                </DialogContent>
+              </Dialog>
+
+              <DeletionDialog
+                onDeleteConfirmed={handleDeleteSession}
+                isOpen={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+              />
+            </div>
           </div>
+
         )}
       </div>
     </div>
