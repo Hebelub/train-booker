@@ -15,7 +15,7 @@ const ClientSideAuthHandler = () => {
             await signInWithCustomToken(auth, token || "");
         };
         authenticateFirebase();
-    }, [getToken]);
+    }, [getToken, auth]);
 
     return null; // This component doesn't render anything
 };
