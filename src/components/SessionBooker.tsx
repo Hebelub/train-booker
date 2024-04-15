@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import SessionListItem from './SessionListItem';
 import { getSessions } from '@/utils/sessions';
 import { Session } from '@/types/Session';
+import SessionList from '@/components/SessionList';
 
 function SessionBooker() {
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -27,18 +28,9 @@ function SessionBooker() {
                 {date ? date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) : "Select a date"}
             </div>
             <div className="flex-1 rounded-md overflow-y-auto">
-                <ScrollArea className="h-full">
-                    {sessions.map((session) => (
-                        <div key={session.id}>
-                            <SessionListItem
-                                {...session}
-                            />
-                            <Separator className="my-2" />
-                        </div>
-                    ))}
-                </ScrollArea>
-            </div >
-        </div >
+                <SessionList sessions={sessions} />
+            </div>
+        </div>
     );
 }
 
