@@ -56,7 +56,6 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                 toast({
                     title: "Success",
                     description: `Session created with ID: ${sessionId}`,
-                    status: "success"
                 });
                 console.log("Session created with ID:", sessionId);
             } else if (mode === 'update' && session?.id) {
@@ -67,7 +66,6 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                 toast({
                     title: "Success",
                     description: "Session was successfully edited",
-                    status: "success"
                 });
                 console.log("Session updated:", session?.id);
             }
@@ -75,7 +73,6 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
             toast({
                 title: "Error",
                 description: `Error ${mode === 'add' ? 'adding' : 'updating'} session`,
-                status: "error"
             });
             console.error(`Error ${mode === 'add' ? 'adding' : 'updating'} session:`, error);
         }
