@@ -3,12 +3,15 @@
 import { Session } from "@/types/Session"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ClockIcon, LocationIcon, UserIcon } from "@/utils/icons"
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from "@/utils/icons"
 import { formatDate, formatTime, convertToHoursAndMinutes } from "@/utils/utils"
 import { useState } from "react"
 import { addSession } from "@/utils/sessions"
 import app from "@/utils/firebase"
 import { useUser } from "@clerk/clerk-react"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 
 interface SessionFormProps {
     session?: Session
@@ -21,7 +24,8 @@ function SessionForm({ session }: SessionFormProps) {
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
     const [startTime, setStartTime] = useState(session?.startTime || new Date());
-    const [duration, setDuration] = useState(session?.duration || 0);
+    const [hours, setHours] = useState(0);
+    const [minutes, setMinutes] = useState(0);
     const [location, setLocation] = useState(session?.location || '');
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 0);
@@ -29,6 +33,8 @@ function SessionForm({ session }: SessionFormProps) {
     // Example of how you might handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const duration = hours * 60 + minutes;
 
         const newSession = {
             name,
@@ -56,7 +62,7 @@ function SessionForm({ session }: SessionFormProps) {
             <Card className="p-4 items-center max-w-[400px]">
                 <CardHeader>
                     <CardTitle>
-                        <input
+                        <Input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -65,7 +71,7 @@ function SessionForm({ session }: SessionFormProps) {
                         />
                     </CardTitle>
                     <CardDescription className="flex items-center gap-2">
-                        <textarea
+                        <Textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             placeholder="Description"
@@ -74,29 +80,45 @@ function SessionForm({ session }: SessionFormProps) {
                     </CardDescription>
                 </CardHeader>
 
-                <CardContent>
+                <CardContent className="space-y-4">
                     <div className="flex items-center gap-2">
-                        <ClockIcon />
-                        <input
+                        <Input
                             type="datetime-local"
                             value={startTime.toISOString().substring(0, 16)}
                             onChange={(e) => setStartTime(new Date(e.target.value))}
                             className="input"
                         />
                     </div>
-                    <div>
-                        <label><strong>Duration: </strong>
-                            <input
+                    <div className="flex gap-2 items-center">
+                        <ClockIcon />
+                        <div>
+                            <Label htmlFor="hoursInput">Hours</Label>
+                            <Input
+                                id="hoursInput"
                                 type="number"
-                                value={duration}
-                                onChange={(e) => setDuration(Number(e.target.value))}
+                                value={hours}
+                                onChange={(e) => setHours(Number(e.target.value))}
                                 className="input"
+                                min="0"
                             />
-                        </label>
+                        </div>
+                        <div>
+                            <Label htmlFor="minutesInput">Minutes</Label>
+                            <Input
+                                id="minutesInput"
+                                type="number"
+                                value={minutes}
+                                onChange={(e) => setMinutes(Number(e.target.value))}
+                                className="input"
+                                min="0"
+                                max="59"
+                            />
+                        </div>
                     </div>
+
                     <div className="flex items-center gap-2">
                         <LocationIcon />
-                        <input
+                        <Input
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
@@ -106,7 +128,7 @@ function SessionForm({ session }: SessionFormProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <UserIcon />
-                        <input
+                        <Input
                             type="text"
                             value={instructorName}
                             onChange={(e) => setInstructorName(e.target.value)}
@@ -114,15 +136,15 @@ function SessionForm({ session }: SessionFormProps) {
                             className="input"
                         />
                     </div>
-                    <div>
-                        <label><strong>Max Attendees:</strong>
-                            <input
-                                type="number"
-                                value={maxAttendees}
-                                onChange={(e) => setMaxAttendees(Number(e.target.value))}
-                                className="input"
-                            />
-                        </label>
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="maxAttendees">Max Attendees</Label>
+                        <Input
+                            id="maxAttendees"
+                            type="number"
+                            value={maxAttendees}
+                            onChange={(e) => setMaxAttendees(Number(e.target.value))}
+                            className="input"
+                        />
                     </div>
                 </CardContent>
 
