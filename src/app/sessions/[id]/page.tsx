@@ -17,6 +17,7 @@ import SessionForm from '@/components/SessionForm';
 import { deleteSession } from '@/utils/sessions';
 import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
+import AttendeeList from '@/components/AttendeeList';
 
 function SessionPage() {
 
@@ -96,7 +97,6 @@ function SessionPage() {
       toast({
         title: "Success",
         description: "Session deleted successfully.",
-        status: "success"
       });
       router.push('/sessions'); // Navigate back to the sessions listing
     } catch (error) {
@@ -104,7 +104,6 @@ function SessionPage() {
       toast({
         title: "Error",
         description: "Failed to delete the session.",
-        status: "error"
       });
     }
   };
@@ -187,9 +186,14 @@ function SessionPage() {
                 onOpenChange={setIsDeleteDialogOpen}
               />
             </div>
+
+            <div className='mt-4'>
+              <AttendeeList attendees={session.attendeeIds} />
+            </div>
           </div>
 
         )}
+
       </div>
     </div>
   );
