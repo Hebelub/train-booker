@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClockIcon, LocationIcon, UserIcon, CalendarIcon } from '@/utils/icons';
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime } from '@/utils/utils';
 
 function SessionPage() {
