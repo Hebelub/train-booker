@@ -39,9 +39,21 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
     const [location, setLocation] = useState(session?.location || '');
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 20);
+    const [formErrors, setFormErrors] = useState({ name: false });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate required fields
+        if (!name.trim()) {
+            setFormErrors({ ...formErrors, name: true });
+            toast({
+                title: "Validation Error",
+                description: "Name is required",
+                status: "error",
+            });
+            return; // Stop the form submission if validation fails
+        }
 
         const duration = hours * 60 + minutes;
 
@@ -91,9 +103,14 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                         <Input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                if (formErrors.name && e.target.value.trim()) {
+                                    setFormErrors({ ...formErrors, name: false });
+                                }
+                            }}
                             placeholder="Session Name"
-                            className="input"
+                            className={`${formErrors.name ? 'border-red-500' : ''} input`} // Apply conditional styling directly
                         />
                     </CardTitle>
                     <CardDescription className="flex items-center gap-2">
