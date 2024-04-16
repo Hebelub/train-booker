@@ -25,16 +25,13 @@ function SessionBooker() {
 
     useEffect(() => {
         getSessions().then(fetchedSessions => {
-            console.log(fetchedSessions);
-            setSessions(fetchedSessions);
+            const sortedSessions = fetchedSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+            setSessions(sortedSessions);
         });
     }, []);
 
     return (
         <div className="flex justify-center items-stretch h-[100%] flex-col w-[350px]">
-            <div className="h-[50px] flex items-center justify-center border rounded-md mb-4">
-                {date ? date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }) : "Select a date"}
-            </div>
             <div className="flex-1 rounded-md overflow-y-auto">
                 <SessionList sessions={sessions} />
             </div>
