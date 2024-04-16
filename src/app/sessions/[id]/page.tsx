@@ -36,6 +36,8 @@ function SessionPage() {
 
   const { toast } = useToast();
 
+  const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
+
   useEffect(() => {
 
     const retrieveSession = async () => {
@@ -69,10 +71,24 @@ function SessionPage() {
     if (isBooked) {
       unbookSession(sessionId, userId ?? '').then(() => {
         setIsBooked(false);
+        // Remove the userId from the attendeeIds array locally after successful server update
+        if (session) {
+          setSession({
+            ...session,
+            attendeeIds: session.attendeeIds.filter(id => id !== userId)
+          });
+        }
       });
     } else {
       bookSession(sessionId, userId ?? '').then(() => {
         setIsBooked(true);
+        // Add the userId to the attendeeIds array locally after successful server update
+        if (session) {
+          setSession({
+            ...session,
+            attendeeIds: [...session.attendeeIds, userId || '']
+          });
+        }
       });
     }
   };
@@ -108,6 +124,13 @@ function SessionPage() {
     }
   };
 
+  const waitingListPosition = () => {
+    if (session) {
+      const position = session.attendeeIds.indexOf(userId || "") - session.maxAttendees + 1;
+      return position;
+    }
+    return 0;
+  };
 
   // Handling display of session details or a loading message
   if (!session) {
@@ -142,7 +165,20 @@ function SessionPage() {
               <UserIcon />
               <span>{session.instructorName}</span>
             </div>
-            <p><strong>Max Attendees:</strong> {session.maxAttendees}</p>
+            <div className="text-sm">
+              {/* Display available slots or waiting list status */}
+              {availableSlots > 0 ? (
+                <p><strong>Available:</strong> {availableSlots}</p>
+              ) : (
+                <p className="text-red-500"><strong>Waiting List</strong></p>
+              )}
+            </div>
+            {waitingListPosition() > 0 && (
+              <div className="text-sm">
+                <p className="text-red-500"><strong>You are number {waitingListPosition()} on the waiting list.</strong></p>
+              </div>
+            )}
+
           </CardContent>
 
           <CardFooter>
@@ -188,7 +224,7 @@ function SessionPage() {
             </div>
 
             <div className='mt-4'>
-              <AttendeeList attendees={session.attendeeIds} />
+              <AttendeeList attendees={session.attendeeIds} maxAttendees={session.maxAttendees} />
             </div>
           </div>
 
