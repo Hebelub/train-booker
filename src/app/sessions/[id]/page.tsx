@@ -178,6 +178,12 @@ function SessionPage() {
                 <p className="text-red-500"><strong>You are number {waitingListPosition()} on the waiting list.</strong></p>
               </div>
             )}
+            {isBooked && (
+              <div className="flex items-center gap-2 text-green-500">
+                <CheckIcon />
+                <span>Booked</span>
+              </div>
+            )}
 
           </CardContent>
 
