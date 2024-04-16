@@ -60,7 +60,7 @@ function SessionList({ sessions }: SessionListProps) {
             <ScrollArea className="h-full">
                 {Array.from(sessionsByDate.entries()).map(([date, sessions]) => (
                     <div key={date}>
-                        <div className="px-4 py-2 bg-gray-200 text-lg font-semibold">
+                        <div className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-lg font-semibold">
                             {new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </div>
                         {sessions.map(session => (
