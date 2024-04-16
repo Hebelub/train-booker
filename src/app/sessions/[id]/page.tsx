@@ -170,7 +170,7 @@ function SessionPage() {
               {availableSlots > 0 ? (
                 <p><strong>Available:</strong> {availableSlots}</p>
               ) : (
-                <p className="text-red-500"><strong>Waiting List</strong></p>
+                <p className="text-red-500"><strong>Session Full</strong></p>
               )}
             </div>
             {waitingListPosition() > 0 && (
