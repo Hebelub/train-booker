@@ -1,4 +1,4 @@
-import app from "./firebase";
+import app from '@/utils/firebase';
 import { Session } from '../types/Session';
 import { 
     getFirestore, 
