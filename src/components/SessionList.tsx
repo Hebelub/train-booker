@@ -48,15 +48,15 @@ function SessionList({ sessions }: SessionListProps) {
 
     return (
         <div>
-            <div className="flex items-center space-x-2 my-2">
-                <Checkbox id="terms" isChecked={showOnlyBooked} onCheckedChange={handleCheckboxChange} />
+            {/* <div className="flex items-center space-x-2 my-2">
+                <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />
                 <label
                     htmlFor="terms"
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                     Only show booked sessions
                 </label>
-            </div>
+            </div> */}
             <ScrollArea className="h-full">
                 {Array.from(sessionsByDate.entries()).map(([date, sessions]) => (
                     <div key={date}>
