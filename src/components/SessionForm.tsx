@@ -26,14 +26,19 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
 
     const submitButtonText = mode === 'update' ? 'Confirm Edit' : 'Submit Session';
 
+    // Calculate hours and minutes from duration
+    const durationInMinutes = session?.duration || 0;
+    const initialHours = Math.floor(durationInMinutes / 60); // Get whole hours
+    const initialMinutes = durationInMinutes % 60; // Get remaining minutes
+
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
     const [startTime, setStartTime] = useState(session?.startTime || new Date());
-    const [hours, setHours] = useState(0);
-    const [minutes, setMinutes] = useState(0);
+    const [hours, setHours] = useState(initialHours);
+    const [minutes, setMinutes] = useState(initialMinutes);
     const [location, setLocation] = useState(session?.location || '');
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
-    const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 0);
+    const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 20);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

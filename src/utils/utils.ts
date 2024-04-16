@@ -1,6 +1,7 @@
-export function convertToHoursAndMinutes(number: number) {
-    const hours = Math.floor(number); // Gets the whole hour part
-    const minutes = Math.round((number - hours) * 60); // Converts the fractional part to minutes
+export function convertToHoursAndMinutes(totalMinutes: number) {
+    const hours = Math.floor(totalMinutes / 60);  // Calculate total hours
+    const minutes = totalMinutes % 60;            // Get the remaining minutes after extracting hours
+
     let result = "";
 
     // Append hours to the result string if more than 0
@@ -16,7 +17,7 @@ export function convertToHoursAndMinutes(number: number) {
         result += `${minutes} minute${minutes > 1 ? 's' : ''}`;
     }
 
-    return result || "0 minutes"; // Return "0 minutes" if the input was 0 or something that rounds down to 0
+    return result || "0 minutes"; // Return "0 minutes" if there are no hours and minutes
 }
 
 export function formatDate(date: Date) {
