@@ -50,7 +50,6 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
             toast({
                 title: "Validation Error",
                 description: "Name is required",
-                status: "error",
             });
             return; // Stop the form submission if validation fails
         }
