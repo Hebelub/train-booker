@@ -21,6 +21,11 @@ import AttendeeList from '@/components/AttendeeList';
 import { clerkClient } from '@clerk/nextjs';
 import { EventStatus } from '@/components/EventStatus';
 
+
+function SessionHasPassed(session: Session) {
+  return new Date(session.startTime.getTime() + session.duration * 60000) < new Date();
+}
+
 function SessionPage() {
 
   const pathname = usePathname();
@@ -213,14 +218,14 @@ function SessionPage() {
 
           </CardContent>
 
-          <CardFooter>
+          {!SessionHasPassed(session) && (<CardFooter>
             <SessionBookingControls
               sessionId={sessionId}
               userId={userId || null}
               isBooked={isBooked}
               onBookingChange={handleBookingChange}
             />
-          </CardFooter>
+          </CardFooter>)}
         </Card>
 
         {/* Admin section */}
