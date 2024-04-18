@@ -19,6 +19,7 @@ import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
 import AttendeeList from '@/components/AttendeeList';
 import { clerkClient } from '@clerk/nextjs';
+import { EventStatus } from '@/components/EventStatus';
 
 function SessionPage() {
 
@@ -36,9 +37,9 @@ function SessionPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { toast } = useToast();
-  
+
   const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
-  
+
   const [userNames, setUserNames] = useState<string[]>([]);
 
   useEffect(() => {
@@ -59,13 +60,13 @@ function SessionPage() {
         }
       }
     };
-  
+
     retrieveSession();
   }, [sessionId, userId]);
-  
+
   useEffect(() => {
     console.log("Session State Update:", session);
-  
+
     const fetchUserNames = async () => {
       if (session && session.attendeeIds && session.attendeeIds.length > 0) {
         try {
@@ -83,12 +84,12 @@ function SessionPage() {
         }
       }
     };
-  
+
     if (session) {
       fetchUserNames();
     }
-  }, [session]);  // Trigger on session changes
-  
+  }, [session]);
+
 
   const handleBookingChange = () => {
     if (isBooked) {
@@ -207,6 +208,8 @@ function SessionPage() {
                 <span>Booked</span>
               </div>
             )}
+
+            <EventStatus startTime={session.startTime} duration={session.duration} />
 
           </CardContent>
 

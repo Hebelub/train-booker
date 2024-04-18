@@ -5,6 +5,7 @@ import { UserIcon, CalendarIcon, CheckIcon } from '@/utils/icons';
 import { formatDate, formatTime } from '@/utils/utils';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
+import { EventStatus } from '@/components/EventStatus'
 
 
 function SessionListItem(props: Session) {
@@ -26,7 +27,7 @@ function SessionListItem(props: Session) {
             <CardContent>
                 <div className="flex items-center gap-2">
                     <CalendarIcon />
-                    <span>{formatDate(props.startTime) + ", " + formatTime(props.startTime)}</span>
+                    <span>{formatDate(props.startTime) + ", " + formatTime(props.startTime)} <EventStatus startTime={props.startTime} duration={props.duration} /></span>
                 </div>
                 <div className="flex items-center gap-2">
                     <UserIcon />

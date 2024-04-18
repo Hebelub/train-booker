@@ -15,7 +15,7 @@ import { isUserIdAdmin } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 
 
-function SessionBooker() {
+function SessionBooker() {    
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [sessions, setSessions] = useState<Session[]>([]);
 
