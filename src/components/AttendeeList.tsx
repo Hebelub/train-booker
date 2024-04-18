@@ -7,7 +7,6 @@ interface AttendeeListProps {
 }
 
 function AttendeeList({ attendees, maxAttendees }: AttendeeListProps) {
-    
     const attendingList = attendees.slice(0, maxAttendees);
     const waitingList = attendees.slice(maxAttendees);
 

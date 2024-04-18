@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon } from '@/utils/icons';
@@ -18,6 +18,7 @@ import { deleteSession } from '@/utils/sessions';
 import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
 import AttendeeList from '@/components/AttendeeList';
+import { clerkClient } from '@clerk/nextjs';
 
 function SessionPage() {
 
@@ -35,37 +36,59 @@ function SessionPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { toast } = useToast();
-
+  
   const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
+  
+  const [userNames, setUserNames] = useState<string[]>([]);
 
   useEffect(() => {
-
     const retrieveSession = async () => {
-
       if (sessionId) {
-        getSessionById(sessionId).then(result => {
+        try {
+          const result = await getSessionById(sessionId);
           if (result) {
             setSession(result);
             setIsBooked(result.attendeeIds.includes(userId ?? ''));
+            console.log("Session loaded:", result);
           } else {
             setSession(null);
           }
-        });
+        } catch (error) {
+          console.error("Failed to load session:", error);
+          setSession(null);
+        }
       }
-    }
-
+    };
+  
     retrieveSession();
   }, [sessionId, userId]);
-
+  
   useEffect(() => {
-    if (sessionId) {
-      // Fetch session by ID, then check the result before setting state
-      getSessionById(sessionId).then(result => {
-        // Only set the state if result is not undefined
-        setSession(result ?? null); // Use null if result is undefined
-      });
+    console.log("Session State Update:", session);
+  
+    const fetchUserNames = async () => {
+      if (session && session.attendeeIds && session.attendeeIds.length > 0) {
+        try {
+          const usernames = await Promise.all(
+            session.attendeeIds.map(async (userId) => {
+              console.log("Fetching username for userId:", userId);
+              const user = await clerkClient.users.getUser(userId);
+              return user.username || "fallback"; // Fallback to userId if username isn't available
+            })
+          );
+          setUserNames(usernames);
+          console.log("Usernames fetched:", usernames);
+        } catch (error) {
+          console.error('Failed to fetch usernames:', error);
+        }
+      }
+    };
+  
+    if (session) {
+      fetchUserNames();
     }
-  }, [sessionId]);
+  }, [session]);  // Trigger on session changes
+  
 
   const handleBookingChange = () => {
     if (isBooked) {
@@ -230,7 +253,7 @@ function SessionPage() {
             </div>
 
             <div className='mt-4'>
-              <AttendeeList attendees={session.attendeeIds} maxAttendees={session.maxAttendees} />
+              <AttendeeList attendees={userNames.length ? userNames : session.attendeeIds} maxAttendees={session.maxAttendees} />
             </div>
           </div>
 
