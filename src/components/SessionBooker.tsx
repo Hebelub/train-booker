@@ -14,8 +14,13 @@ import { useAuth } from '@clerk/clerk-react';
 import { isUserIdAdmin } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
 
+function isUpcomingOrToday(session: Session) {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set time to 00:00:00 for today's date
+    return session.startTime >= now;
+}
 
-function SessionBooker() {    
+function SessionBooker() {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [sessions, setSessions] = useState<Session[]>([]);
 
@@ -25,7 +30,8 @@ function SessionBooker() {
 
     useEffect(() => {
         getSessions().then(fetchedSessions => {
-            const sortedSessions = fetchedSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+            const upcomingSessions = fetchedSessions.filter(isUpcomingOrToday);
+            const sortedSessions = upcomingSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
             setSessions(sortedSessions);
         });
     }, []);

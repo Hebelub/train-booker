@@ -126,7 +126,7 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                     <div className="flex items-center gap-2">
                         <Input
                             type="datetime-local"
-                            value={startTime.toISOString().substring(0, 16)}
+                            value={startTime instanceof Date && !isNaN(startTime.getTime()) ? startTime.toISOString().substring(0, 16) : ''}
                             onChange={(e) => setStartTime(new Date(e.target.value))}
                             className="input"
                         />
