@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import SessionListItem from './SessionListItem';
-import { getSessions, isUpcomingOrToday, updateSessionStartTimes } from '@/utils/sessions';
+import { getSessions, isUpcomingOrToday } from '@/utils/sessions';
 import { Session } from '@/types/Session';
 import SessionList from '@/components/SessionList';
 import { useAuth } from '@clerk/clerk-react';
@@ -24,8 +24,7 @@ function SessionBooker() {
 
     useEffect(() => {
         getSessions().then(fetchedSessions => {
-            const sessionsUpdatedStartTime = updateSessionStartTimes(fetchedSessions);
-            const upcomingSessions = sessionsUpdatedStartTime.filter(isUpcomingOrToday);
+            const upcomingSessions = fetchedSessions.filter(isUpcomingOrToday);
             const sortedSessions = upcomingSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
             setSessions(sortedSessions);
         });

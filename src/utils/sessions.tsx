@@ -24,7 +24,8 @@ const convertTimestamps = (session: any): Session => {
     if (convertedSession.startTime && convertedSession.startTime instanceof Timestamp) {
         convertedSession.startTime = convertedSession.startTime.toDate();
     }
-    return convertedSession as Session;
+    const convertedSessionRepeated = updateSessionBasedOnRepeatMode(convertedSession); // Update the start time based on the day of the week
+    return convertedSessionRepeated as Session;
 };
 
 // Get all sessions
@@ -99,38 +100,33 @@ export function isUpcomingOrToday(session: Session) {
     return session.startTime >= now;
 }
 
-// Update the start times of sessions based on their day of the week
-export function updateSessionStartTimes(sessions: Session[]) {
+// Update the start time of a single session based on the day of the week
+function updateSessionBasedOnRepeatMode(session: Session): Session {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Today's date at the start of the day
 
-    return sessions.map(session => {
-        if (isUpcomingOrToday(session)) {
-            // If the session is today or in the future, return it unchanged
-            return session;
+    if (isUpcomingOrToday(session)) {
+        return session; // If the session is today or in the future, return it unchanged
+    }
+
+    if (session.repeatMode === 'weekly') {
+        const sessionDate = new Date(session.startTime);
+        const sessionDayOfWeek = sessionDate.getDay();
+        const todayDayOfWeek = today.getDay();
+
+        let dayDifference = sessionDayOfWeek - todayDayOfWeek;
+        if (dayDifference < 0) {
+            dayDifference += 7; // Ensure it's always a future date or today
         }
-        if (session.repeatMode === 'weekly') {
-            // Calculate the day of the week for both the session and today
-            const sessionDate = new Date(session.startTime);
-            const sessionDayOfWeek = sessionDate.getDay();
-            const todayDayOfWeek = today.getDay();
 
-            // Calculate the difference in days to the next occurrence of the session's day
-            let dayDifference = sessionDayOfWeek - todayDayOfWeek;
-            if (dayDifference < 0) {
-                dayDifference += 7; // Ensure it's always a future date or today
-            }
+        const updatedSession = { ...session };
+        updatedSession.startTime = new Date(today); // Start with today at midnight
+        updatedSession.startTime.setDate(today.getDate() + dayDifference); // Set to the correct future date
+        updatedSession.startTime.setHours(session.startTime.getHours(), session.startTime.getMinutes(), 0, 0); // Set the original session time
 
-            // Create a new date object for the updated session time
-            const updatedSession = { ...session };
-            updatedSession.startTime = new Date(today); // Start with today at midnight
-            updatedSession.startTime.setDate(today.getDate() + dayDifference); // Set to the correct future date
-            updatedSession.startTime.setHours(session.startTime.getHours(), session.startTime.getMinutes(), 0, 0); // Set the original session time
-
-            return updatedSession;
-        }
-        return session; // Return the session unchanged if it doesn't repeat weekly
-    });
+        return updatedSession;
+    }
+    return session; // Return the session unchanged if it doesn't repeat weekly
 }
 
 export { getSessions, getSessionById, addSession, updateSession, deleteSession };
