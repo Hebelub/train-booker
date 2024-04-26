@@ -33,13 +33,33 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
 
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
-    const [startTime, setStartTime] = useState(session?.startTime || new Date());
+    const [startTime, setStartTime] = useState(new Date(session?.startTime || new Date()));
     const [hours, setHours] = useState(initialHours);
     const [minutes, setMinutes] = useState(initialMinutes);
     const [location, setLocation] = useState(session?.location || '');
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 20);
     const [formErrors, setFormErrors] = useState({ name: false });
+
+    // Helper function to adjust date to local timezone
+    const toLocalISOString = (date: Date) => {
+        const offset = date.getTimezoneOffset() * 60000; // convert offset to milliseconds
+        const localISOTime = new Date(date.getTime() - offset).toISOString().slice(0, 16);
+        return localISOTime;
+    };
+
+    // Adjusts an ISO string from the input to be a correct Date object in local time
+    const parseLocalDate = (isoStr: string) => {
+        const date = new Date(isoStr);
+        const tzOffset = date.getTimezoneOffset() * 60000;
+        return new Date(date.getTime() + tzOffset);
+    };
+
+    // Function to handle date-time changes
+    const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newDate = parseLocalDate(e.target.value);
+        setStartTime(newDate);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -126,11 +146,12 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                     <div className="flex items-center gap-2">
                         <Input
                             type="datetime-local"
-                            value={startTime instanceof Date && !isNaN(startTime.getTime()) ? startTime.toISOString().substring(0, 16) : ''}
-                            onChange={(e) => setStartTime(new Date(e.target.value))}
+                            value={toLocalISOString(startTime)}
+                            onChange={handleDateTimeChange}
                             className="input"
                         />
                     </div>
+
                     <div className="flex gap-2 items-center">
                         <ClockIcon />
                         <div>
