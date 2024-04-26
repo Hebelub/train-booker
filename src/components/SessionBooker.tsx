@@ -13,14 +13,22 @@ import SessionList from '@/components/SessionList';
 import { useAuth } from '@clerk/clerk-react';
 import { isUserIdAdmin } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
+import { Checkbox } from "@/components/ui/checkbox"
 
 function SessionBooker() {
+
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [sessions, setSessions] = useState<Session[]>([]);
 
     const { userId } = useAuth();
     const isAdmin = isUserIdAdmin(userId || "");
     const router = useRouter();
+
+    const [showOnlyBooked, setShowOnlyBooked] = useState(false);
+
+    const handleCheckboxChange = (isChecked: boolean) => {
+        setShowOnlyBooked(isChecked);
+    };
 
     useEffect(() => {
         getSessions().then(fetchedSessions => {
@@ -32,8 +40,19 @@ function SessionBooker() {
 
     return (
         <div className="flex justify-center items-stretch h-[100%] flex-col w-[350px]">
+            
+            <div className="flex items-center space-x-2 my-2">
+                    <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />
+                    <label
+                        htmlFor="terms"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Only show booked sessions
+                    </label>
+                </div>
+
             <div className="flex-1 rounded-md overflow-y-auto">
-                <SessionList sessions={sessions} />
+                <SessionList sessions={sessions} showOnlyBooked={showOnlyBooked} />
             </div>
 
             {/* Admin section */}

@@ -8,18 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 interface SessionListProps {
     sessions: Session[];
+    showOnlyBooked: boolean;
 }
 
-function SessionList({ sessions }: SessionListProps) {
+function SessionList({ sessions, showOnlyBooked }: SessionListProps) {
     const { userId } = useAuth();
-
-    const [showOnlyBooked, setShowOnlyBooked] = useState(false);
-
-    // Handler for the checkbox change
-    const handleCheckboxChange = (isChecked: boolean) => {
-        setShowOnlyBooked(isChecked);
-    };
-
 
     // Function to group sessions by date
     const groupSessionsByDate = (sessions: Session[]) => {
@@ -47,32 +40,21 @@ function SessionList({ sessions }: SessionListProps) {
     const sessionsByDate = groupSessionsByDate(filteredSessions);
 
     return (
-        <div>
-            <div className="flex items-center space-x-2 my-2">
-                <Checkbox id="terms" onCheckedChange={handleCheckboxChange} />
-                <label
-                    htmlFor="terms"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                    Only show booked sessions
-                </label>
-            </div>
-            <ScrollArea className="h-full">
-                {Array.from(sessionsByDate.entries()).map(([date, sessions]) => (
-                    <div key={date}>
-                        <div className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-lg font-semibold">
-                            {new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                        </div>
-                        {sessions.map(session => (
-                            <div key={session.id}>
-                                <SessionListItem {...session} />
-                                <Separator className="my-2" />
-                            </div>
-                        ))}
+        <ScrollArea className="h-full">
+            {Array.from(sessionsByDate.entries()).map(([date, sessions]) => (
+                <div key={date}>
+                    <div className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-lg font-semibold">
+                        {new Date(date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                     </div>
-                ))}
-            </ScrollArea>
-        </div>
+                    {sessions.map(session => (
+                        <div key={session.id}>
+                            <SessionListItem {...session} />
+                            <Separator className="my-2" />
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </ScrollArea>
     );
 }
 
