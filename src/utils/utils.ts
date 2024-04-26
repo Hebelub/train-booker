@@ -1,3 +1,5 @@
+import { Session } from "@/types/Session";
+
 export function convertToHoursAndMinutes(totalMinutes: number) {
     const hours = Math.floor(totalMinutes / 60);  // Calculate total hours
     const minutes = totalMinutes % 60;            // Get the remaining minutes after extracting hours

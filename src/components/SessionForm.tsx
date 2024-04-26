@@ -39,6 +39,7 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
     const [location, setLocation] = useState(session?.location || '');
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 20);
+    const [repeatMode, setRepeatMode] = useState(session?.repeatMode || 'weekly');
     const [formErrors, setFormErrors] = useState({ name: false });
 
     // Helper function to adjust date to local timezone
@@ -83,7 +84,8 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
             duration,
             location,
             instructorName,
-            maxAttendees
+            maxAttendees,
+            repeatMode,
         };
 
         try {
@@ -206,6 +208,16 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                             type="number"
                             value={maxAttendees}
                             onChange={(e) => setMaxAttendees(Number(e.target.value))}
+                            className="input"
+                        />
+                    </div>
+                    <div className="grid w-full max-w-sm items-center gap-1.5">
+                        <Label htmlFor="maxAttendees">Repeat Mode (weekly/once)</Label>
+                        <Input
+                            id="repeatMode"
+                            type="text"
+                            value={repeatMode}
+                            onChange={(e) => setRepeatMode(e.target.value)}
                             className="input"
                         />
                     </div>

@@ -1,13 +1,13 @@
 import app from '@/utils/firebase';
 import { Session } from '../types/Session';
-import { 
-    getFirestore, 
-    collection, 
-    getDocs, 
-    doc, 
-    getDoc, 
-    addDoc, 
-    updateDoc, 
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    getDoc,
+    addDoc,
+    updateDoc,
     deleteDoc,
     Timestamp,
     arrayUnion,
@@ -91,5 +91,46 @@ export const unbookSession = async (sessionId: string, userId: string): Promise<
         attendeeIds: arrayRemove(userId) // Removes userId from the attendeeIds array
     });
 };
+
+// Checks if a session is upcoming or today
+export function isUpcomingOrToday(session: Session) {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set time to 00:00:00 for today's date
+    return session.startTime >= now;
+}
+
+// Update the start times of sessions based on their day of the week
+export function updateSessionStartTimes(sessions: Session[]) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Today's date at the start of the day
+
+    return sessions.map(session => {
+        if (isUpcomingOrToday(session)) {
+            // If the session is today or in the future, return it unchanged
+            return session;
+        }
+        if (session.repeatMode === 'weekly') {
+            // Calculate the day of the week for both the session and today
+            const sessionDate = new Date(session.startTime);
+            const sessionDayOfWeek = sessionDate.getDay();
+            const todayDayOfWeek = today.getDay();
+
+            // Calculate the difference in days to the next occurrence of the session's day
+            let dayDifference = sessionDayOfWeek - todayDayOfWeek;
+            if (dayDifference < 0) {
+                dayDifference += 7; // Ensure it's always a future date or today
+            }
+
+            // Create a new date object for the updated session time
+            const updatedSession = { ...session };
+            updatedSession.startTime = new Date(today); // Start with today at midnight
+            updatedSession.startTime.setDate(today.getDate() + dayDifference); // Set to the correct future date
+            updatedSession.startTime.setHours(session.startTime.getHours(), session.startTime.getMinutes(), 0, 0); // Set the original session time
+
+            return updatedSession;
+        }
+        return session; // Return the session unchanged if it doesn't repeat weekly
+    });
+}
 
 export { getSessions, getSessionById, addSession, updateSession, deleteSession };

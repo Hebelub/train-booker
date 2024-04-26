@@ -7,5 +7,6 @@ export interface Session {
     location: string;
     instructorName: string;
     maxAttendees: number;
+    repeatMode: string;
     attendeeIds: string[];
 }

@@ -7,18 +7,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import SessionListItem from './SessionListItem';
-import { getSessions } from '@/utils/sessions';
+import { getSessions, isUpcomingOrToday, updateSessionStartTimes } from '@/utils/sessions';
 import { Session } from '@/types/Session';
 import SessionList from '@/components/SessionList';
 import { useAuth } from '@clerk/clerk-react';
 import { isUserIdAdmin } from '@/utils/utils';
 import { useRouter } from 'next/navigation';
-
-function isUpcomingOrToday(session: Session) {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0); // Set time to 00:00:00 for today's date
-    return session.startTime >= now;
-}
 
 function SessionBooker() {
     const [date, setDate] = useState<Date | undefined>(new Date());
@@ -30,7 +24,8 @@ function SessionBooker() {
 
     useEffect(() => {
         getSessions().then(fetchedSessions => {
-            const upcomingSessions = fetchedSessions.filter(isUpcomingOrToday);
+            const sessionsUpdatedStartTime = updateSessionStartTimes(fetchedSessions);
+            const upcomingSessions = sessionsUpdatedStartTime.filter(isUpcomingOrToday);
             const sortedSessions = upcomingSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
             setSessions(sortedSessions);
         });
