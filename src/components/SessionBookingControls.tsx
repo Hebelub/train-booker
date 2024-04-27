@@ -16,7 +16,7 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
     const { toast } = useToast();
 
     if (!props.userId) {
-        return <div>You must be signed in to book a session.</div>;
+        return <div>You must be signed in to book a session.</div>
     }
 
     const handleBook = async () => {

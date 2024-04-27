@@ -134,7 +134,7 @@ function SessionPage() {
 
   // Handling display of session details or a loading message
   if (!session) {
-    return <div className="flex min-h-screen flex-col items-center justify-center p-24">Loading session details...</div>;
+    return <div className="flex min-h-screen flex-col items-center justify-center p-24">Loading session details...</div>
   }
 
   return (
