@@ -39,6 +39,23 @@ function SessionList({ sessions, showOnlyBooked }: SessionListProps) {
     const filteredSessions = showOnlyBooked ? sessions.filter(session => session.attendeeIds.includes(userId || "")) : sessions;
     const sessionsByDate = groupSessionsByDate(filteredSessions);
 
+    // Conditional rendering logic before the return statement
+    if (filteredSessions.length === 0) {
+        if (showOnlyBooked) {
+            return (
+                <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    You have no sessions booked.
+                </div>
+            );
+        } else {
+            return (
+                <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                    No sessions found.
+                </div>
+            );
+        }
+    }
+
     return (
         <ScrollArea className="h-full">
             {Array.from(sessionsByDate.entries()).map(([date, sessions]) => (
