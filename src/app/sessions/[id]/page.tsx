@@ -45,8 +45,6 @@ function SessionPage() {
 
   const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
 
-  const [userNames, setUserNames] = useState<string[]>([]);
-
   useEffect(() => {
     const retrieveSession = async () => {
       if (sessionId) {
@@ -68,33 +66,6 @@ function SessionPage() {
 
     retrieveSession();
   }, [sessionId, userId]);
-
-  useEffect(() => {
-    console.log("Session State Update:", session);
-
-    const fetchUserNames = async () => {
-      if (session && session.attendeeIds && session.attendeeIds.length > 0) {
-        try {
-          const usernames = await Promise.all(
-            session.attendeeIds.map(async (userId) => {
-              console.log("Fetching username for userId:", userId);
-              const user = await clerkClient.users.getUser(userId);
-              return user.username || "fallback"; // Fallback to userId if username isn't available
-            })
-          );
-          setUserNames(usernames);
-          console.log("Usernames fetched:", usernames);
-        } catch (error) {
-          console.error('Failed to fetch usernames:', error);
-        }
-      }
-    };
-
-    if (session) {
-      fetchUserNames();
-    }
-  }, [session]);
-
 
   const handleBookingChange = () => {
     if (isBooked) {
@@ -261,7 +232,7 @@ function SessionPage() {
             </div>
 
             <div className='mt-4'>
-              <AttendeeList attendees={userNames.length ? userNames : session.attendeeIds} maxAttendees={session.maxAttendees} />
+              <AttendeeList attendeeIds={session.attendeeIds} maxAttendees={session.maxAttendees} />
             </div>
           </div>
 
