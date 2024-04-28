@@ -1,44 +1,30 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { User } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
-import { clerkClient } from '@clerk/nextjs/server';
+import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingIcon } from "@/utils/icons";
 
 
 interface AttendeeListProps {
-    attendeeIds: string[];
+    sessionId: string;
     maxAttendees: number;
 }
 
-function AttendeeList({ attendeeIds, maxAttendees }: AttendeeListProps) {
+function AttendeeList({ sessionId, maxAttendees }: AttendeeListProps) {
 
-    const [attendees, setAttendees] = useState(attendeeIds);
+    const [attendees, setAttendees] = useState<User[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setAttendees(attendeeIds);
+        const fetchAttendees = async () => {
+            const users: User[] = await (await fetch(`/api/sessions/${sessionId}/users`)).json()
+            setAttendees(users);
+            setLoading(false);
+        };
 
-        async function fetchAttendeesData() {
-            try {
-                if (!attendeeIds || attendeeIds.length === 0) {
-                    console.log("No attendees to fetch.");
-                    return;
-                }
-
-                // Assuming there's a method to fetch multiple users if not handle it as per your API
-                const responses = await Promise.all(
-                    attendeeIds.map(id => clerkClient.users.getUser(id))
-                );
-
-                console.log("Attendee details:", responses);
-
-                const attendeeNames = responses.map(response => "DEBUG");
-                setAttendees(attendeeNames);
-            } catch (error) {
-                console.error('Failed to fetch attendee data:', error);
-            }
-        }
-
-        fetchAttendeesData();
-    }, [attendeeIds]);
+        fetchAttendees();
+    }, [sessionId]);
 
 
     const attendingList = attendees.slice(0, maxAttendees);
@@ -49,9 +35,10 @@ function AttendeeList({ attendeeIds, maxAttendees }: AttendeeListProps) {
         <ScrollArea className="h-72 w-full rounded-md border">
             <div className="p-4">
                 <h4 className="mb-4 text-sm font-medium leading-none">Attending People ({attendingList.length})</h4>
-                {attendingList.map((attendee, index) => (
+                {loading && <LoadingIcon />}
+                {!loading && attendingList.map((attendee, index) => (
                     <div key={index} className="text-sm">
-                        {attendee}
+                        {attendee.firstName} {attendee.lastName}
                         <Separator className="my-2" />
                     </div>
                 ))}
@@ -62,7 +49,7 @@ function AttendeeList({ attendeeIds, maxAttendees }: AttendeeListProps) {
                         <h4 className="mt-4 mb-2 text-sm font-medium leading-none">Waiting List ({waitingList.length})</h4>
                         {waitingList.map((attendee, index) => (
                             <div key={'waiting-' + index} className="text-sm">
-                                {attendee}
+                                {attendee.firstName} {attendee.lastName}
                                 <Separator className="my-2" />
                             </div>
                         ))}

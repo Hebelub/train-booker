@@ -8,18 +8,18 @@ import { Button } from "@/components/ui/button";
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon } from '@/utils/icons';
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon, LoadingIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import SessionForm from '@/components/SessionForm';
 import { deleteSession } from '@/utils/sessions';
 import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
 import AttendeeList from '@/components/AttendeeList';
-import { clerkClient } from '@clerk/nextjs';
 import { EventStatus } from '@/components/EventStatus';
+
 
 
 function SessionHasPassed(session: Session) {
@@ -134,7 +134,7 @@ function SessionPage() {
 
   // Handling display of session details or a loading message
   if (!session) {
-    return <div className="flex min-h-screen flex-col items-center justify-center p-24">Loading session details...</div>
+    return <div className="flex min-h-screen flex-col items-center justify-center p-24"><LoadingIcon className="w-12 h-12" /></div>
   }
 
   return (
@@ -232,7 +232,7 @@ function SessionPage() {
             </div>
 
             <div className='mt-4'>
-              <AttendeeList attendeeIds={session.attendeeIds} maxAttendees={session.maxAttendees} />
+              <AttendeeList sessionId={session.id} maxAttendees={session.maxAttendees} />
             </div>
           </div>
 
