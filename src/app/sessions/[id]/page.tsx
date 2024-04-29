@@ -19,6 +19,7 @@ import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
 import AttendeeList from '@/components/AttendeeList';
 import { EventStatus } from '@/components/EventStatus';
+import { User } from '@clerk/nextjs/server';
 
 
 
@@ -30,6 +31,8 @@ function SessionPage() {
 
   const pathname = usePathname();
   const sessionId = pathname.split('/')[2];
+
+  const { user } = useUser();
 
   const { userId } = useAuth();
   const isAdmin = isUserIdAdmin(userId || '');
@@ -44,6 +47,19 @@ function SessionPage() {
   const { toast } = useToast();
 
   const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
+
+  const [attendees, setAttendees] = useState<User[]>([]);
+  const [attendeesIsLoading, setAttendeesIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAttendees = async () => {
+      const users: User[] = await (await fetch(`/api/sessions/${sessionId}/users`)).json()
+      setAttendeesIsLoading(false);
+      setAttendees(users);
+    };
+
+    fetchAttendees();
+  }, [sessionId]);
 
   useEffect(() => {
     const retrieveSession = async () => {
@@ -77,6 +93,7 @@ function SessionPage() {
             ...session,
             attendeeIds: session.attendeeIds.filter(id => id !== userId)
           });
+          setAttendees(attendees.filter(user => user.id !== userId));
         }
       });
     } else {
@@ -88,6 +105,9 @@ function SessionPage() {
             ...session,
             attendeeIds: [...session.attendeeIds, userId || '']
           });
+          if (user) {
+            setAttendees([...attendees, user as unknown as User]);
+          }
         }
       });
     }
@@ -232,7 +252,7 @@ function SessionPage() {
             </div>
 
             <div className='mt-4'>
-              <AttendeeList sessionId={session.id} maxAttendees={session.maxAttendees} />
+              <AttendeeList maxAttendees={session.maxAttendees} attendees={attendees} isLoading={attendeesIsLoading} />
             </div>
           </div>
 
