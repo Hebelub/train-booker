@@ -224,7 +224,7 @@ function SessionPage() {
           <div className="mt-4 w-full">
             <Separator />
             <div className="w-full">
-              <span className="text-center text-sm text-gray-500 mt-4">Admin Section</span>
+              <span className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">Admin Section</span>
             </div>
 
             <div className="flex">

@@ -30,8 +30,8 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
                                 <img src={attendee.imageUrl} className="w-6 h-6 rounded-full inline-block mr-2" /> 
                                 {attendee.firstName} {attendee.lastName}
                             </div>
-                            <div className="text-sm text-gray-600">{attendee.emailAddresses[0].emailAddress || 'N/A'}</div>
-                            <div className="text-sm text-gray-600">{attendee.phoneNumbers[0].phoneNumber || 'N/A'}</div>
+                            <div className="text-sm">{attendee.emailAddresses[0].emailAddress || 'N/A'}</div>
+                            <div className="text-sm">{attendee.phoneNumbers[0].phoneNumber || 'N/A'}</div>
                         </div>
                         <Separator className="my-2" />
                     </div>
