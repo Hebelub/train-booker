@@ -23,9 +23,16 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
                 <h4 className="mb-4 text-sm font-medium leading-none">Attending People ({attendingList.length})</h4>
 
                 {isLoading && <LoadingIcon />}
-                {!isLoading && attendingList.map((attendee, index) => (
-                    <div key={index} className="text-sm">
-                        {attendee.firstName} {attendee.lastName}
+                {!isLoading && attendingList.map((attendee) => (
+                    <div key={attendee.id}>
+                        <div className="grid grid-cols-3 gap-4 py-2">
+                            <div className="text-sm">
+                                <img src={attendee.imageUrl} className="w-6 h-6 rounded-full inline-block mr-2" /> 
+                                {attendee.firstName} {attendee.lastName}
+                            </div>
+                            <div className="text-sm text-gray-600">{attendee.emailAddresses[0].emailAddress || 'N/A'}</div>
+                            <div className="text-sm text-gray-600">{attendee.phoneNumbers[0].phoneNumber || 'N/A'}</div>
+                        </div>
                         <Separator className="my-2" />
                     </div>
                 ))}
@@ -34,9 +41,13 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
                 {!isLoading && waitingList.length > 0 && (
                     <>
                         <h4 className="mt-4 mb-2 text-sm font-medium leading-none">Waiting List ({waitingList.length})</h4>
-                        {waitingList.map((attendee, index) => (
-                            <div key={'waiting-' + index} className="text-sm">
-                                {attendee.firstName} {attendee.lastName}
+                        {waitingList.map((attendee) => (
+                            <div key={attendee.id}>
+                                <div className="grid grid-cols-3 gap-4 py-2">
+                                    <div className="text-sm">{<img src={attendee.imageUrl} className="w-6 h-6 rounded-full inline-block mr-2" />} {attendee.firstName} {attendee.lastName}</div>
+                                    <div className="text-sm text-gray-600">{attendee.emailAddresses[0].emailAddress || 'N/A'}</div>
+                                    <div className="text-sm text-gray-600">{attendee.phoneNumbers[0].phoneNumber || 'N/A'}</div>
+                                </div>
                                 <Separator className="my-2" />
                             </div>
                         ))}
