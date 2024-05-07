@@ -4,11 +4,17 @@ import { LoadingIcon } from "@/utils/icons";
 import { DataTable } from "./attendees/data-table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import Image from "next/image";
+import { ColumnDef, Row } from "@tanstack/react-table";
 
 interface AttendeeListProps {
     maxAttendees: number;
     attendees: User[];
     isLoading: boolean;
+}
+
+interface CellInfo {
+    row: Row<User>;
+    getValue: () => any;  // Adjust based on actual method signature
 }
 
 function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps) {
@@ -17,11 +23,11 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
     const waitingList = attendees.slice(maxAttendees);
 
     // Define columns for the DataTable
-    const columns = [
+    const columns: ColumnDef<User>[] = [
         {
             accessorKey: 'name',
             header: 'Name',
-            cell: info => (
+            cell: (info: CellInfo) => (
                 <div className="flex items-center space-x-3">
                     <Image src={info.row.original.imageUrl} alt="Profile" className="w-10 h-10 rounded-full" />
                     <span>{info.row.original.firstName} {info.row.original.lastName}</span>
@@ -31,12 +37,12 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
         {
             accessorKey: 'emailAddresses',
             header: 'Email',
-            cell: info => info.getValue()[0]?.emailAddress || 'N/A'
+            cell: (info: CellInfo) => info.getValue()[0]?.emailAddress || 'N/A'
         },
         {
             accessorKey: 'phoneNumbers',
             header: 'Phone',
-            cell: info => info.getValue()[0]?.phoneNumber || 'N/A'
+            cell: (info: CellInfo) => info.getValue()[0]?.phoneNumber || 'N/A'
         }
     ];
 
