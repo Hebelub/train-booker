@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LoadingIcon } from "@/utils/icons";
 import { DataTable } from "./attendees/data-table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import Image from "next/image";
 
 interface AttendeeListProps {
     maxAttendees: number;
@@ -22,7 +23,7 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
             header: 'Name',
             cell: info => (
                 <div className="flex items-center space-x-3">
-                    <img src={info.row.original.imageUrl} alt="Profile" className="w-10 h-10 rounded-full" />
+                    <Image src={info.row.original.imageUrl} alt="Profile" className="w-10 h-10 rounded-full" />
                     <span>{info.row.original.firstName} {info.row.original.lastName}</span>
                 </div>
             )
