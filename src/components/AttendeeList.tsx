@@ -29,7 +29,13 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
             header: 'Name',
             cell: (info: CellInfo) => (
                 <div className="flex items-center space-x-3">
-                    <Image src={info.row.original.imageUrl} alt="Profile" className="w-10 h-10 rounded-full" />
+                    <Image
+                        src={info.row.original.imageUrl}
+                        alt="Profile"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
+                    />
                     <span>{info.row.original.firstName} {info.row.original.lastName}</span>
                 </div>
             )
@@ -47,13 +53,13 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
     ];
 
     return (
-        <ScrollArea className="mx-auto pt-10 w-screen">
-            <div className="flex w-max space-x-4">
+        <ScrollArea className="mx-auto pt-10 w-screen mb-10">
+            <div className="w-max">
 
                 {isLoading ? (
                     <LoadingIcon />
                 ) : (
-                    <div className="">
+                    <>
                         <h4 className="mb-4 text-sm font-medium leading-none">Attending People ({attendingList.length})</h4>
                         <DataTable columns={columns} data={attendingList} />
 
@@ -63,7 +69,7 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
                                 <DataTable columns={columns} data={waitingList} />
                             </>
                         )}
-                    </div>
+                    </>
                 )}
             </div>
 
