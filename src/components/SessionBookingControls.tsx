@@ -20,10 +20,10 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
     }
 
     const handleBook = async () => {
+
         try {
             setLoading(true);
-            await bookSession(props.sessionId, props.userId!);
-            props.onBookingChange();  // Assuming this does something useful like refreshing data
+            props.onBookingChange();
             setLoading(false);
             toast({
                 title: "Booking Successful",
@@ -41,10 +41,10 @@ const SessionBookingControls = (props: SessionBookingControlsProps) => {
     };
 
     const handleUnbook = async () => {
+
         try {
             setLoading(true);
-            await unbookSession(props.sessionId, props.userId!);
-            props.onBookingChange();  // Assuming this does something useful
+            props.onBookingChange();
             setLoading(false);
             toast({
                 title: "Unbooking Successful",
