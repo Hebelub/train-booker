@@ -7,7 +7,7 @@ interface SessionBookingControlsProps {
     sessionId: string;
     userId: string | null;
     isBooked: boolean;
-    onBookingChange: () => void;  // Ensure you actually need this prop
+    onBookingChange: () => void;
 }
 
 const SessionBookingControls = (props: SessionBookingControlsProps) => {

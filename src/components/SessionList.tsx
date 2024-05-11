@@ -5,6 +5,7 @@ import SessionListItem from './SessionListItem';
 import { Session } from '@/types/Session';
 import { useAuth } from '@clerk/clerk-react';
 import { Checkbox } from "@/components/ui/checkbox"
+import { idsOfAttending } from '@/utils/sessions';
 
 interface SessionListProps {
     sessions: Session[];
@@ -36,7 +37,7 @@ function SessionList({ sessions, showOnlyBooked }: SessionListProps) {
     };
 
     // Filter sessions if the checkbox is checked
-    const filteredSessions = showOnlyBooked ? sessions.filter(session => session.attendeeIds.includes(userId || "")) : sessions;
+    const filteredSessions = showOnlyBooked ? sessions.filter(session => idsOfAttending(session).includes(userId || "")) : sessions;
     const sessionsByDate = groupSessionsByDate(filteredSessions);
 
     // Conditional rendering logic before the return statement

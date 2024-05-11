@@ -1,5 +1,5 @@
 import app from '@/utils/firebase';
-import { Session } from '../types/Session';
+import { Attendee, Session } from '../types/Session';
 import {
     getFirestore,
     collection,
@@ -35,7 +35,8 @@ const getSessions = async (): Promise<Session[]> => {
         const data = doc.data();
         return {
             ...convertTimestamps(data),  // Convert timestamps to Date objects
-            id: doc.id
+            id: doc.id,
+            attendees: data.attendees ? data.attendees : []  // Ensure attendees is always an array
         } as Session;
     });
 };
@@ -55,10 +56,10 @@ const getSessionById = async (id: string): Promise<Session | undefined> => {
 };
 
 // Add a new session
-const addSession = async (session: Omit<Session, 'id' | 'attendeeIds'>): Promise<string> => {
+const addSession = async (session: Omit<Session, 'id' | 'attendees'>): Promise<string> => {
     const sessionWithAttendees = {
         ...session,
-        attendeeIds: [] // Ensuring attendeeIds is always initialized as an empty array
+        attendees: [] // Ensuring attendees is always initialized as an empty array
     };
 
     const docRef = await addDoc(sessionsCollection, sessionWithAttendees);
@@ -80,17 +81,30 @@ const deleteSession = async (id: string): Promise<void> => {
 // Function to book a session
 export const bookSession = async (sessionId: string, userId: string): Promise<void> => {
     const sessionDocRef = doc(db, "sessions", sessionId);
+    const timestamp = new Date(); // Captures the current date and time
     await updateDoc(sessionDocRef, {
-        attendeeIds: arrayUnion(userId) // Adds userId to the attendeeIds array
+        attendees: arrayUnion({
+            userId: userId,
+            bookedAt: timestamp
+        })
     });
 };
 
 // Function to unbook a session
 export const unbookSession = async (sessionId: string, userId: string): Promise<void> => {
     const sessionDocRef = doc(db, "sessions", sessionId);
-    await updateDoc(sessionDocRef, {
-        attendeeIds: arrayRemove(userId) // Removes userId from the attendeeIds array
-    });
+    const docSnap = await getDoc(sessionDocRef);
+
+    if (docSnap.exists()) {
+        const sessionData = docSnap.data();
+        const newAttendees = sessionData.attendees.filter((attendee: Attendee) => attendee.userId !== userId);
+
+        await updateDoc(sessionDocRef, {
+            attendees: newAttendees
+        });
+    } else {
+        console.log("No such session!");
+    }
 };
 
 // Checks if a session is upcoming or today
@@ -128,5 +142,29 @@ function updateSessionBasedOnRepeatMode(session: Session): Session {
     }
     return session; // Return the session unchanged if it doesn't repeat weekly
 }
+
+export function idsOfAttending(session: Session): string[] {
+    if (!session.attendees) {
+        return [];
+    }
+
+    session = updateSessionBasedOnRepeatMode(session);
+
+    if (session.repeatMode === 'weekly') {
+        // Calculate the date one week prior to the session's startTime
+        const oneWeekBeforeSession = new Date(session.startTime);
+        oneWeekBeforeSession.setDate(oneWeekBeforeSession.getDate() - 7);
+
+        // Filter attendees whose bookedAt date is at least one week after the session startTime
+        return session.attendees.filter((attendee: Attendee) => {
+            const bookedDate = attendee.bookedAt.toDate(); // Convert Timestamp to Date
+            return bookedDate > oneWeekBeforeSession;
+        }).map((attendee: Attendee) => attendee.userId); // Return the user IDs of filtered attendees
+    } else {
+        // If the session is not weekly, simply return all attendee IDs
+        return session.attendees.map((attendee: Attendee) => attendee.userId);
+    }
+}
+
 
 export { getSessions, getSessionById, addSession, updateSession, deleteSession };

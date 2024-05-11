@@ -14,12 +14,13 @@ import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import SessionForm from '@/components/SessionForm';
-import { deleteSession } from '@/utils/sessions';
+import { deleteSession, idsOfAttending } from '@/utils/sessions';
 import DeletionDialog from '@/components/DeletionDialog';
 import { useToast } from '@/components/ui/use-toast';
 import AttendeeList from '@/components/AttendeeList';
 import { EventStatus } from '@/components/EventStatus';
 import { User } from '@clerk/nextjs/server';
+import { Timestamp } from 'firebase/firestore';
 
 
 
@@ -46,7 +47,7 @@ function SessionPage() {
 
   const { toast } = useToast();
 
-  const availableSlots = session ? session.maxAttendees - session.attendeeIds.length : 0;
+  const availableSlots = session ? session.maxAttendees - idsOfAttending(session).length : 0;
 
   const [attendees, setAttendees] = useState<User[]>([]);
   const [attendeesIsLoading, setAttendeesIsLoading] = useState(true);
@@ -68,7 +69,7 @@ function SessionPage() {
           const result = await getSessionById(sessionId);
           if (result) {
             setSession(result);
-            setIsBooked(result.attendeeIds.includes(userId ?? ''));
+            setIsBooked(idsOfAttending(result).includes(userId ?? ''));
             console.log("Session loaded:", result);
           } else {
             setSession(null);
@@ -85,33 +86,51 @@ function SessionPage() {
 
   const handleBookingChange = () => {
     if (isBooked) {
-      unbookSession(sessionId, userId ?? '').then(() => {
-        setIsBooked(false);
-        // Remove the userId from the attendeeIds array locally after successful server update
+      // Optimistically set isBooked to false and update local UI state
+      setIsBooked(false);
+      if (session) {
+        const filteredAttendees = session.attendees.filter(attendee => attendee.userId !== userId);
+        setSession({
+          ...session,
+          attendees: filteredAttendees
+        });
+      }
+      setAttendees(attendees.filter(user => user.id !== userId));
+  
+      // Then try to update on the server
+      unbookSession(sessionId, userId ?? '').catch(() => {
+        // If the server call fails, revert the changes locally
+        setIsBooked(true);
         if (session) {
-          setSession({
-            ...session,
-            attendeeIds: session.attendeeIds.filter(id => id !== userId)
-          });
-          setAttendees(attendees.filter(user => user.id !== userId));
+          setSession(session); // Revert to the original session state
         }
+        setAttendees(attendees); // Revert to the original attendees list
       });
     } else {
-      bookSession(sessionId, userId ?? '').then(() => {
-        setIsBooked(true);
-        // Add the userId to the attendeeIds array locally after successful server update
+      // Optimistically set isBooked to true and update local UI state
+      setIsBooked(true);
+      if (session && user) {
+        const newAttendee = { userId: userId || '', bookedAt: Timestamp.fromDate(new Date()) };
+        setSession({
+          ...session,
+          attendees: [...session.attendees, newAttendee]
+        });
+        setAttendees([...attendees, user as unknown as User]);
+      }
+  
+      // Then try to update on the server
+      bookSession(sessionId, userId ?? '').catch(() => {
+        // If the server call fails, revert the changes locally
+        setIsBooked(false);
         if (session) {
-          setSession({
-            ...session,
-            attendeeIds: [...session.attendeeIds, userId || '']
-          });
-          if (user) {
-            setAttendees([...attendees, user as unknown as User]);
-          }
+          setSession(session); // Revert to the original session state
         }
+        setAttendees(attendees); // Revert to the original attendees list
       });
     }
   };
+  
+  
 
   const handleUpdateSession = (updatedSession: Partial<Session>) => {
     setIsEditDialogOpen(false);
@@ -146,7 +165,7 @@ function SessionPage() {
 
   const waitingListPosition = () => {
     if (session) {
-      const position = session.attendeeIds.indexOf(userId || "") - session.maxAttendees + 1;
+      const position = idsOfAttending(session).indexOf(userId || "") - session.maxAttendees + 1;
       return position;
     }
     return 0;

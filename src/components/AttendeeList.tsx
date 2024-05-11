@@ -18,6 +18,7 @@ interface CellInfo {
 }
 
 function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps) {
+
     // Split the attendees into attending and waiting lists
     const attendingList = attendees.slice(0, maxAttendees);
     const waitingList = attendees.slice(maxAttendees);

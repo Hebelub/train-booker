@@ -6,6 +6,7 @@ import { formatDate, formatTime } from '@/utils/utils';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
 import { EventStatus } from '@/components/EventStatus'
+import { idsOfAttending } from '@/utils/sessions';
 
 
 function SessionListItem(props: Session) {
@@ -14,10 +15,10 @@ function SessionListItem(props: Session) {
     const [isBooked, setIsBooked] = useState(false);
 
     useEffect(() => {
-        if (userId && props.attendeeIds.includes(userId || "")) {
+        if (userId && idsOfAttending(props).includes(userId || "")) {
             setIsBooked(true);
         }
-    }, [props.attendeeIds, userId]);
+    }, [props, userId]);
 
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">

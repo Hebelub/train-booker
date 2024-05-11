@@ -1,3 +1,10 @@
+import { Timestamp } from "firebase/firestore";
+
+export interface Attendee {
+    userId: string;
+    bookedAt: Timestamp;
+}
+
 export interface Session {
     id: string;
     startTime: Date;
@@ -8,5 +15,5 @@ export interface Session {
     instructorName: string;
     maxAttendees: number;
     repeatMode: string;
-    attendeeIds: string[];
+    attendees: Attendee[];
 }
