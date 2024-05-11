@@ -178,7 +178,7 @@ function SessionPage() {
 
   return (
     <div className="flex pt-20 flex-col items-center justify-center space-y-4">
-      <div className="items-center">
+      <div className="items-center max-w-[500px]">
 
         <Card className="p-4 items-center">
           <CardHeader>
