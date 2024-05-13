@@ -19,6 +19,7 @@ function SessionBooker() {
 
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [sessions, setSessions] = useState<Session[]>([]);
+    const [loadingSessions, setLoadingSessions] = useState<boolean>(true);
 
     const { userId } = useAuth();
     const isAdmin = isUserIdAdmin(userId || "");
@@ -31,10 +32,12 @@ function SessionBooker() {
     };
 
     useEffect(() => {
+        setLoadingSessions(true);
         getSessions().then(fetchedSessions => {
             const upcomingSessions = fetchedSessions.filter(isUpcomingOrToday);
             const sortedSessions = upcomingSessions.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
             setSessions(sortedSessions);
+            setLoadingSessions(false);
         });
     }, []);
 
@@ -52,7 +55,7 @@ function SessionBooker() {
                 </div>
 
             <div className="flex-1 rounded-md overflow-y-auto">
-                <SessionList sessions={sessions} showOnlyBooked={showOnlyBooked} />
+                <SessionList sessions={sessions} showOnlyBooked={showOnlyBooked} loading={loadingSessions} />
             </div>
 
             {/* Admin section */}

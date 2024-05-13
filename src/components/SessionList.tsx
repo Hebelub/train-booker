@@ -6,13 +6,15 @@ import { Session } from '@/types/Session';
 import { useAuth } from '@clerk/clerk-react';
 import { Checkbox } from "@/components/ui/checkbox"
 import { idsOfAttending } from '@/utils/sessions';
+import { LoadingIcon } from '@/utils/icons'
 
 interface SessionListProps {
     sessions: Session[];
     showOnlyBooked: boolean;
+    loading: boolean;
 }
 
-function SessionList({ sessions, showOnlyBooked }: SessionListProps) {
+function SessionList({ sessions, showOnlyBooked, loading }: SessionListProps) {
     const { userId } = useAuth();
 
     // Function to group sessions by date
@@ -39,6 +41,14 @@ function SessionList({ sessions, showOnlyBooked }: SessionListProps) {
     // Filter sessions if the checkbox is checked
     const filteredSessions = showOnlyBooked ? sessions.filter(session => idsOfAttending(session).includes(userId || "")) : sessions;
     const sessionsByDate = groupSessionsByDate(filteredSessions);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <LoadingIcon className="w-16 h-16" />
+            </div>
+        );
+    }
 
     // Conditional rendering logic before the return statement
     if (filteredSessions.length === 0) {
