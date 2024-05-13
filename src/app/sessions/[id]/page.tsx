@@ -173,7 +173,7 @@ function SessionPage() {
 
   // Handling display of session details or a loading message
   if (!session) {
-    return <div className="flex min-h-screen flex-col items-center justify-center p-24"><LoadingIcon className="w-12 h-12" /></div>
+    return <div className="flex min-h-screen flex-col items-center justify-center p-24"><LoadingIcon className="w-16 h-16" /></div>
   }
 
   return (
