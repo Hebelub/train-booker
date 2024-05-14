@@ -40,6 +40,7 @@ function SessionPage() {
   const router = useRouter();
 
   const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isBooked, setIsBooked] = useState(false);
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -63,26 +64,20 @@ function SessionPage() {
   }, [sessionId]);
 
   useEffect(() => {
-    const retrieveSession = async () => {
-      if (sessionId) {
-        try {
-          const result = await getSessionById(sessionId);
-          if (result) {
-            setSession(result);
-            setIsBooked(idsOfAttending(result).includes(userId ?? ''));
-            console.log("Session loaded:", result);
-          } else {
-            setSession(null);
-          }
-        } catch (error) {
-          console.error("Failed to load session:", error);
-          setSession(null);
-        }
-      }
-    };
+    if (!sessionId) return; // Guard against undefined sessionId
 
-    retrieveSession();
-  }, [sessionId, userId]);
+    setLoading(true); // Start loading when sessionId changes
+    getSessionById(sessionId)
+      .then((result) => {
+        setSession(result || null);
+      })
+      .catch((error) => {
+        console.error("Failed to load session:", error);
+      })
+      .finally(() => {
+        setLoading(false); // Stop loading regardless of the result
+      });
+  }, [sessionId]);
 
   const handleBookingChange = () => {
     if (isBooked) {
@@ -129,8 +124,6 @@ function SessionPage() {
       });
     }
   };
-  
-  
 
   const handleUpdateSession = (updatedSession: Partial<Session>) => {
     setIsEditDialogOpen(false);
@@ -172,10 +165,18 @@ function SessionPage() {
   };
 
   // Handling display of session details or a loading message
-  if (!session) {
+  if (loading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-24">
         <LoadingIcon className="w-16 h-16" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center p-24">
+        <p>Session not found.</p>
       </div>
     );
   }
