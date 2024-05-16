@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
-import SessionBookingControls from '@/components/SessionBookingControls';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon, LoadingIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
@@ -21,7 +20,6 @@ import AttendeeList from '@/components/AttendeeList';
 import { EventStatus } from '@/components/EventStatus';
 import { User } from '@clerk/nextjs/server';
 import { Timestamp } from 'firebase/firestore';
-
 
 
 function SessionHasPassed(session: Session) {
@@ -91,7 +89,7 @@ function SessionPage() {
         });
       }
       setAttendees(attendees.filter(user => user.id !== userId));
-  
+
       // Then try to update on the server
       unbookSession(sessionId, userId ?? '').catch(() => {
         // If the server call fails, revert the changes locally
@@ -112,7 +110,7 @@ function SessionPage() {
         });
         setAttendees([...attendees, user as unknown as User]);
       }
-  
+
       // Then try to update on the server
       bookSession(sessionId, userId ?? '').catch(() => {
         // If the server call fails, revert the changes locally
@@ -234,12 +232,13 @@ function SessionPage() {
           </CardContent>
 
           {!SessionHasPassed(session) && (<CardFooter>
-            <SessionBookingControls
-              sessionId={sessionId}
-              userId={userId || null}
-              isBooked={isBooked}
-              onBookingChange={handleBookingChange}
-            />
+            {userId ? (
+              <Button onClick={handleBookingChange}>
+                {isBooked ? <span>Unbook Session</span> : <span>Book Session</span>}
+              </Button>
+            ) : (
+              <div>You must be signed in to book a session.</div>
+            )}
           </CardFooter>)}
         </Card>
 
