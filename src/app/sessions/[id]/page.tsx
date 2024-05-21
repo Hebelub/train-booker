@@ -62,12 +62,19 @@ function SessionPage() {
   }, [sessionId]);
 
   useEffect(() => {
-    if (!sessionId) return; // Guard against undefined sessionId
+    if (!sessionId || !userId) return;
 
     setLoading(true); // Start loading when sessionId changes
     getSessionById(sessionId)
       .then((result) => {
-        setSession(result || null);
+        if (result) {
+          setSession(result);
+          // Check if the user is already booked
+          const isUserBooked = result.attendees.some(attendee => attendee.userId === userId);
+          setIsBooked(isUserBooked);
+        } else {
+          setSession(null);
+        }
       })
       .catch((error) => {
         console.error("Failed to load session:", error);
@@ -75,7 +82,7 @@ function SessionPage() {
       .finally(() => {
         setLoading(false); // Stop loading regardless of the result
       });
-  }, [sessionId]);
+  }, [sessionId, userId]);
 
   const handleBookingChange = () => {
     if (isBooked) {
