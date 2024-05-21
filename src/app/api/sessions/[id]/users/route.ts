@@ -30,14 +30,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
         // Retrieve user details for each userId in the attendees array
         const usersPromises = attendeeIds.map(userId =>
-            clerkClient.users.getUser(userId)
+            clerkClient.users.getUser(userId).catch(() => null) // Catch errors and return null
         );
         const users = await Promise.all(usersPromises);
 
-        // Optionally, compile a list of usernames or other properties
-        // const usernames = users.map(user => user.username); // Assuming the username field exists
+        // Filter out null values
+        const validUsers = users.filter(user => user !== null);
 
-        return new Response(JSON.stringify(users), {
+        return new Response(JSON.stringify(validUsers), {
             status: 200,
             headers: {
                 "Content-Type": "application/json"
