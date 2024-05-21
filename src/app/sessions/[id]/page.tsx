@@ -20,6 +20,7 @@ import AttendeeList from '@/components/AttendeeList';
 import { EventStatus } from '@/components/EventStatus';
 import { User } from '@clerk/nextjs/server';
 import { Timestamp } from 'firebase/firestore';
+import { SignInButton, SignedOut, UserButton } from "@clerk/nextjs";
 
 
 function SessionHasPassed(session: Session) {
@@ -62,18 +63,16 @@ function SessionPage() {
   }, [sessionId]);
 
   useEffect(() => {
-    if (!sessionId || !userId) return;
+    if (!sessionId) return; // Guard against undefined sessionId
 
     setLoading(true); // Start loading when sessionId changes
     getSessionById(sessionId)
       .then((result) => {
-        if (result) {
-          setSession(result);
+        setSession(result || null);
+        if (result && userId) {
           // Check if the user is already booked
           const isUserBooked = result.attendees.some(attendee => attendee.userId === userId);
           setIsBooked(isUserBooked);
-        } else {
-          setSession(null);
         }
       })
       .catch((error) => {
@@ -83,6 +82,7 @@ function SessionPage() {
         setLoading(false); // Stop loading regardless of the result
       });
   }, [sessionId, userId]);
+
 
   const handleBookingChange = () => {
     if (isBooked) {
@@ -244,7 +244,14 @@ function SessionPage() {
                 {isBooked ? <span>Unbook Session</span> : <span>Book Session</span>}
               </Button>
             ) : (
-              <div>You must be signed in to book a session.</div>
+              <SignedOut>
+                <div className="flex flex-col gap-2">
+                  <span className="text-red-500">You must be signed in to book a session.</span>
+                  <SignInButton afterSignInUrl={pathname} mode="modal">
+                    <Button>Sign In</Button>
+                  </SignInButton>
+                </div>
+              </SignedOut>
             )}
           </CardFooter>)}
         </Card>
