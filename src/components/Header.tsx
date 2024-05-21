@@ -1,9 +1,14 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image";
 import { SignInButton, SignedOut, UserButton } from "@clerk/nextjs";
 import { ThemeToggler } from "./ThemeToggler";
+import { usePathname } from 'next/navigation';
 
 function Header() {
+
+    const pathname = usePathname();
 
     return (
         <header className="flex items-center justify-between">
@@ -25,10 +30,10 @@ function Header() {
                 <ThemeToggler />
 
                 {/* User Button */}
-                <UserButton afterSignOutUrl="/sessions" />
+                <UserButton afterSignOutUrl={pathname} />
 
                 <SignedOut>
-                    <SignInButton mode="modal" />
+                    <SignInButton afterSignInUrl={pathname}  mode="modal" />
                 </SignedOut>
             </div>
         </header>
