@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import Link from 'next/link';
 import { Session } from '@/types/Session';
-import { UserIcon, CalendarIcon, CheckIcon } from '@/utils/icons';
+import { UserIcon, CalendarIcon, CheckIcon, ClockIcon } from '@/utils/icons';
 import { formatDate, formatTime } from '@/utils/utils';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
@@ -20,6 +20,14 @@ function SessionListItem(props: Session) {
         }
     }, [props, userId]);
 
+    const getDayName = (date: Date) => {
+        return date.toLocaleDateString('en-US', { weekday: 'long' });
+    };
+
+    const dateDisplay = props.repeatMode === 'weekly' 
+        ? `Every ${getDayName(props.startTime)}`
+        : `Once at ${formatDate(props.startTime)}`;
+
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
             <CardHeader>
@@ -28,7 +36,12 @@ function SessionListItem(props: Session) {
             <CardContent>
                 <div className="flex items-center gap-2">
                     <CalendarIcon />
-                    <span>{formatDate(props.startTime) + ", " + formatTime(props.startTime)} <EventStatus startTime={props.startTime} duration={props.duration} /></span>
+                    <span>{dateDisplay}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <ClockIcon />
+                    {formatTime(props.startTime)} - {formatTime(new Date(props.startTime.getTime() + props.duration * 60000))}
+                    <EventStatus startTime={props.startTime} duration={props.duration} />
                 </div>
                 <div className="flex items-center gap-2">
                     <UserIcon />

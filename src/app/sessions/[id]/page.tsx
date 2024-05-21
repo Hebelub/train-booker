@@ -186,6 +186,14 @@ function SessionPage() {
     );
   }
 
+  const getDayName = (date: Date) => {
+    return date.toLocaleDateString('en-US', { weekday: 'long' });
+  };
+
+  const dateDisplay = session.repeatMode === 'weekly'
+    ? `Every ${getDayName(session.startTime)}`
+    : `Once at ${formatDate(session.startTime)}`;
+
   return (
     <div className="flex pt-20 flex-col items-center justify-center space-y-4">
       <div className="items-center max-w-[500px]">
@@ -201,10 +209,12 @@ function SessionPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <CalendarIcon />
-              <span>{formatDate(session.startTime) + ", " + formatTime(session.startTime)}</span>
+              <span>{dateDisplay}</span>
             </div>
             <div className="flex items-center gap-2">
-              <ClockIcon />{convertToHoursAndMinutes(session.duration)}
+              <ClockIcon />
+              {formatTime(session.startTime)} - {formatTime(new Date(session.startTime.getTime() + session.duration * 60000))}
+              <EventStatus startTime={session.startTime} duration={session.duration} />
             </div>
             <div className="flex items-center gap-2">
               <LocationIcon />
@@ -241,7 +251,7 @@ function SessionPage() {
           {!SessionHasPassed(session) && (<CardFooter>
             {userId ? (
               <Button onClick={handleBookingChange}>
-                {isBooked ? <span>Unbook Session</span> : <span>Book Session</span>}
+                {isBooked ? <span>Unbook {formatDate(session.startTime)}</span> : <span>Book {formatDate(session.startTime)}</span>}
               </Button>
             ) : (
               <SignedOut>
