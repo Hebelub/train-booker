@@ -18,7 +18,7 @@ export const EventStatus: React.FC<EventStatusProps> = ({ startTime, duration })
     if (now > end) {
         return (
             <div className={`text-red-500 flex items-center gap-2`}>
-                <span>{"Session passed"}</span>
+                <span>{"Passed"}</span>
             </div>
         )
     }
@@ -27,7 +27,7 @@ export const EventStatus: React.FC<EventStatusProps> = ({ startTime, duration })
     else {
         return (
             <div className={`text-yellow-500 flex items-center gap-2`}>
-                <span>{"Event is Ongoing"}</span>
+                <span>{"Ongoing"}</span>
             </div>
         )
     }
