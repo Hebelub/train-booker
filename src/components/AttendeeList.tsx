@@ -5,6 +5,7 @@ import { DataTable } from "./attendees/data-table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import Image from "next/image";
 import { ColumnDef, Row } from "@tanstack/react-table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AttendeeListProps {
     maxAttendees: number;
@@ -30,13 +31,10 @@ function AttendeeList({ maxAttendees, attendees, isLoading }: AttendeeListProps)
             header: 'Name',
             cell: (info: CellInfo) => (
                 <div className="flex items-center space-x-3">
-                    <Image
-                        src={info.row.original.imageUrl}
-                        alt="Profile"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                    />
+                    <Avatar>
+                        <AvatarImage src={info.row.original.imageUrl} alt="Profile" />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
                     <span>{info.row.original.firstName} {info.row.original.lastName}</span>
                 </div>
             )
