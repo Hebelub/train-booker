@@ -33,7 +33,11 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
 
     const [name, setName] = useState(session?.name || '');
     const [description, setDescription] = useState(session?.description || '');
-    const [startTime, setStartTime] = useState(new Date(session?.startTime || new Date()));
+    const [startTime, setStartTime] = useState(() => {
+        const now = new Date(session?.startTime || new Date());
+        now.setMinutes(0, 0, 0); // Set minutes, seconds, and milliseconds to 0
+        return now;
+    });
     const [hours, setHours] = useState(initialHours);
     const [minutes, setMinutes] = useState(initialMinutes);
     const [location, setLocation] = useState(session?.location || '');
@@ -48,17 +52,10 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
         const localISOTime = new Date(date.getTime() - offset).toISOString().slice(0, 16);
         return localISOTime;
     };
-
-    // Adjusts an ISO string from the input to be a correct Date object in local time
-    const parseLocalDate = (isoStr: string) => {
-        const date = new Date(isoStr);
-        const tzOffset = date.getTimezoneOffset() * 60000;
-        return new Date(date.getTime() + tzOffset);
-    };
-
+    
     // Function to handle date-time changes
     const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newDate = parseLocalDate(e.target.value);
+        const newDate = new Date(e.target.value);
         setStartTime(newDate);
     };
 
