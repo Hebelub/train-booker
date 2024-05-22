@@ -75,7 +75,7 @@ function SessionBooker() {
                     <span className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">Admin Section</span>
                     <div className="flex justify-center items-center space-x-2 mt-2">
                         <Button className='w-full' onClick={() => router.push('/sessions/create')}>Create Session</Button>
-                        <Toggle variant="outline" onPressedChange={handleAdminToggleChange}>
+                        <Toggle onPressedChange={handleAdminToggleChange}>
                             <EyeIcon className="w-6 h-6 mx-auto" />
                         </Toggle>
                     </div>
