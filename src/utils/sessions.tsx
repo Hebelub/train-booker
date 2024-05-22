@@ -167,7 +167,7 @@ export function idsOfAttending(session: Session): string[] {
 }
 
 export const isSessionHidden = (session: Session) => {
-    return !isUpcomingOrToday(session);
+    return !isUpcomingOrToday(session) || session.isHidden === true;
 };
 
 export { getSessions, getSessionById, addSession, updateSession, deleteSession };

@@ -16,4 +16,5 @@ export interface Session {
     maxAttendees: number;
     repeatMode: string;
     attendees: Attendee[];
+    isHidden: boolean;
 }

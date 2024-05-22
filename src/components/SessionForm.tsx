@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
-
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface SessionFormProps {
     session?: Session
@@ -44,6 +44,8 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
     const [instructorName, setInstructorName] = useState(session?.instructorName || '');
     const [maxAttendees, setMaxAttendees] = useState(session?.maxAttendees || 20);
     const [repeatMode, setRepeatMode] = useState(session?.repeatMode || 'weekly');
+    const [isHidden, setIsHidden] = useState(session?.isHidden === true);
+
     const [formErrors, setFormErrors] = useState({ name: false });
 
     // Helper function to adjust date to local timezone
@@ -52,7 +54,11 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
         const localISOTime = new Date(date.getTime() - offset).toISOString().slice(0, 16);
         return localISOTime;
     };
-    
+
+    const handleIsHiddenCheckboxChange = (isChecked: boolean) => {
+        setIsHidden(isChecked);
+    };
+
     // Function to handle date-time changes
     const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = new Date(e.target.value);
@@ -83,6 +89,7 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
             instructorName,
             maxAttendees,
             repeatMode,
+            isHidden,
         };
 
         try {
@@ -215,6 +222,16 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
                             type="text"
                             value={repeatMode}
                             onChange={(e) => setRepeatMode(e.target.value)}
+                            className="input"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Label htmlFor="isHidden">Hidden</Label>
+                        <Checkbox
+                            id="isHidden"
+                            checked={isHidden}
+                            onCheckedChange={handleIsHiddenCheckboxChange}
                             className="input"
                         />
                     </div>
