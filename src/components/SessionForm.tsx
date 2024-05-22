@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SessionFormProps {
     session?: Session
@@ -121,127 +122,129 @@ function SessionForm({ session, mode, onUpdate }: SessionFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="">
-            <Card className="p-4 items-center max-w-[500px]">
-                <CardHeader>
-                    <CardTitle>
-                        <Input
-                            type="text"
-                            value={name}
-                            onChange={(e) => {
-                                setName(e.target.value);
-                                if (formErrors.name && e.target.value.trim()) {
-                                    setFormErrors({ ...formErrors, name: false });
-                                }
-                            }}
-                            placeholder="Session Name"
-                            className={`${formErrors.name ? 'border-red-500' : ''} input`} // Apply conditional styling directly
-                        />
-                    </CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                        <Textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Description"
-                            className="textarea"
-                        />
-                    </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                    <div className="flex items-center gap-2">
-                        <Input
-                            type="datetime-local"
-                            value={toLocalISOString(startTime)}
-                            onChange={handleDateTimeChange}
-                            className="input"
-                        />
-                    </div>
-
-                    <div className="flex gap-2 items-center">
-                        <ClockIcon />
-                        <div>
-                            <Label htmlFor="hoursInput">Hours</Label>
+        <ScrollArea className="h-screen overflow-auto">
+            <form onSubmit={handleSubmit} className="">
+                <Card className="p-4 items-center max-w-[500px]">
+                    <CardHeader>
+                        <CardTitle>
                             <Input
-                                id="hoursInput"
-                                type="number"
-                                value={hours}
-                                onChange={(e) => setHours(Number(e.target.value))}
+                                type="text"
+                                value={name}
+                                onChange={(e) => {
+                                    setName(e.target.value);
+                                    if (formErrors.name && e.target.value.trim()) {
+                                        setFormErrors({ ...formErrors, name: false });
+                                    }
+                                }}
+                                placeholder="Session Name"
+                                className={`${formErrors.name ? 'border-red-500' : ''} input`} // Apply conditional styling directly
+                            />
+                        </CardTitle>
+                        <CardDescription className="flex items-center gap-2">
+                            <Textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description"
+                                className="textarea"
+                            />
+                        </CardDescription>
+                    </CardHeader>
+
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Input
+                                type="datetime-local"
+                                value={toLocalISOString(startTime)}
+                                onChange={handleDateTimeChange}
                                 className="input"
-                                min="0"
                             />
                         </div>
-                        <div>
-                            <Label htmlFor="minutesInput">Minutes</Label>
+
+                        <div className="flex gap-2 items-center">
+                            <ClockIcon />
+                            <div>
+                                <Label htmlFor="hoursInput">Hours</Label>
+                                <Input
+                                    id="hoursInput"
+                                    type="number"
+                                    value={hours}
+                                    onChange={(e) => setHours(Number(e.target.value))}
+                                    className="input"
+                                    min="0"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="minutesInput">Minutes</Label>
+                                <Input
+                                    id="minutesInput"
+                                    type="number"
+                                    value={minutes}
+                                    onChange={(e) => setMinutes(Number(e.target.value))}
+                                    className="input"
+                                    min="0"
+                                    max="59"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <LocationIcon />
                             <Input
-                                id="minutesInput"
-                                type="number"
-                                value={minutes}
-                                onChange={(e) => setMinutes(Number(e.target.value))}
+                                type="text"
+                                value={location}
+                                onChange={(e) => setLocation(e.target.value)}
+                                placeholder="Location"
                                 className="input"
-                                min="0"
-                                max="59"
                             />
                         </div>
-                    </div>
+                        <div className="flex items-center gap-2">
+                            <UserIcon />
+                            <Input
+                                type="text"
+                                value={instructorName}
+                                onChange={(e) => setInstructorName(e.target.value)}
+                                placeholder="Instructor Name"
+                                className="input"
+                            />
+                        </div>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Label htmlFor="maxAttendees">Max Attendees</Label>
+                            <Input
+                                id="maxAttendees"
+                                type="number"
+                                value={maxAttendees}
+                                onChange={(e) => setMaxAttendees(Number(e.target.value))}
+                                className="input"
+                            />
+                        </div>
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Label htmlFor="repeatMode">Repeat Mode (weekly/once)</Label>
+                            <Input
+                                id="repeatMode"
+                                type="text"
+                                value={repeatMode}
+                                onChange={(e) => setRepeatMode(e.target.value)}
+                                className="input"
+                            />
+                        </div>
 
-                    <div className="flex items-center gap-2">
-                        <LocationIcon />
-                        <Input
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder="Location"
-                            className="input"
-                        />
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <UserIcon />
-                        <Input
-                            type="text"
-                            value={instructorName}
-                            onChange={(e) => setInstructorName(e.target.value)}
-                            placeholder="Instructor Name"
-                            className="input"
-                        />
-                    </div>
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="maxAttendees">Max Attendees</Label>
-                        <Input
-                            id="maxAttendees"
-                            type="number"
-                            value={maxAttendees}
-                            onChange={(e) => setMaxAttendees(Number(e.target.value))}
-                            className="input"
-                        />
-                    </div>
-                    <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Label htmlFor="maxAttendees">Repeat Mode (weekly/once)</Label>
-                        <Input
-                            id="repeatMode"
-                            type="text"
-                            value={repeatMode}
-                            onChange={(e) => setRepeatMode(e.target.value)}
-                            className="input"
-                        />
-                    </div>
+                        <div className="flex items-center gap-2">
+                            <Label htmlFor="isHidden">Hidden</Label>
+                            <Checkbox
+                                id="isHidden"
+                                checked={isHidden}
+                                onCheckedChange={handleIsHiddenCheckboxChange}
+                                className="input"
+                            />
+                        </div>
+                    </CardContent>
 
-                    <div className="flex items-center gap-2">
-                        <Label htmlFor="isHidden">Hidden</Label>
-                        <Checkbox
-                            id="isHidden"
-                            checked={isHidden}
-                            onCheckedChange={handleIsHiddenCheckboxChange}
-                            className="input"
-                        />
-                    </div>
-                </CardContent>
-
-                <CardFooter>
-                    <Button type="submit">{submitButtonText}</Button>
-                </CardFooter>
-            </Card>
-        </form>
+                    <CardFooter>
+                        <Button type="submit">{submitButtonText}</Button>
+                    </CardFooter>
+                </Card>
+            </form>
+        </ScrollArea>
     )
 }
 
