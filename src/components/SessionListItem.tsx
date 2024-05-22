@@ -1,17 +1,17 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 import Link from 'next/link';
 import { Session } from '@/types/Session';
-import { UserIcon, CalendarIcon, CheckIcon, ClockIcon } from '@/utils/icons';
+import { UserIcon, CalendarIcon, CheckIcon, ClockIcon, EyeIcon } from '@/utils/icons';
 import { formatDate, formatTime } from '@/utils/utils';
 import { useAuth, useUser } from '@clerk/clerk-react';
 import { useEffect, useState } from 'react';
 import { EventStatus } from '@/components/EventStatus'
-import { idsOfAttending } from '@/utils/sessions';
+import { idsOfAttending, isSessionHidden } from '@/utils/sessions';
 
 
 function SessionListItem(props: Session) {
 
-    const { userId } = useAuth();    
+    const { userId } = useAuth();
     const [isBooked, setIsBooked] = useState(false);
 
     useEffect(() => {
@@ -24,14 +24,19 @@ function SessionListItem(props: Session) {
         return date.toLocaleDateString('en-US', { weekday: 'long' });
     };
 
-    const dateDisplay = props.repeatMode === 'weekly' 
+    const dateDisplay = props.repeatMode === 'weekly'
         ? `Every ${getDayName(props.startTime)}`
         : `Once at ${formatDate(props.startTime)}`;
 
     return (
         <Link href={`/sessions/${props.id}`} passHref className="no-underline hover:no-underline">
             <CardHeader>
-                <CardTitle>{props.name}</CardTitle>
+                <CardTitle className="flex items-center">
+                    {props.name}
+                    {isSessionHidden(props) && (
+                        <EyeIcon className="w-6 h-6 ml-2" />
+                    )}
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex items-center gap-2">

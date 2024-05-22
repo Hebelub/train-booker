@@ -1,13 +1,13 @@
 'use client'
 
-import { bookSession, getSessionById, unbookSession } from '@/utils/sessions';
+import { bookSession, getSessionById, unbookSession, isSessionHidden } from '@/utils/sessions';
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
 import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon, LoadingIcon } from '@/utils/icons';
+import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon, LoadingIcon, EyeIcon } from '@/utils/icons';
 import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
@@ -20,7 +20,7 @@ import AttendeeList from '@/components/AttendeeList';
 import { EventStatus } from '@/components/EventStatus';
 import { User } from '@clerk/nextjs/server';
 import { Timestamp } from 'firebase/firestore';
-import { SignInButton, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignedOut } from "@clerk/nextjs";
 
 
 function SessionHasPassed(session: Session) {
@@ -200,7 +200,12 @@ function SessionPage() {
 
         <Card className="p-4 items-center">
           <CardHeader>
-            <CardTitle>{session.name}</CardTitle>
+            <CardTitle className="flex items-center">
+              {session.name}
+              {isSessionHidden(session) && (
+                <EyeIcon className="w-6 h-6 ml-2" />
+              )}
+            </CardTitle>
             <CardDescription className="flex items-center gap-2">
               <span>{session.description}</span>
             </CardDescription>
