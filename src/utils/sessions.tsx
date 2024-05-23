@@ -33,11 +33,13 @@ const getSessions = async (): Promise<Session[]> => {
     const snapshot = await getDocs(sessionsCollection);
     return snapshot.docs.map(doc => {
         const data = doc.data();
-        return {
+        const session: Session = {
             ...convertTimestamps(data),  // Convert timestamps to Date objects
             id: doc.id,
             attendees: data.attendees ? data.attendees : []  // Ensure attendees is always an array
-        } as Session;
+        };
+        session.attendees = attendingAttendees(session); // Set filtered attendees
+        return session;
     });
 };
 
@@ -47,10 +49,13 @@ const getSessionById = async (id: string): Promise<Session | undefined> => {
     const docSnap = await getDoc(sessionDoc);
     if (docSnap.exists()) {
         const data = docSnap.data();
-        return {
+        const session: Session = {
             ...convertTimestamps(data),  // Convert timestamps to Date objects
-            id: docSnap.id
-        } as Session;
+            id: docSnap.id,
+            attendees: data.attendees ? data.attendees : []  // Ensure attendees is always an array
+        };
+        session.attendees = attendingAttendees(session); // Set filtered attendees
+        return session;
     }
     return undefined;
 };
@@ -143,7 +148,7 @@ function updateSessionBasedOnRepeatMode(session: Session): Session {
     return session; // Return the session unchanged if it doesn't repeat weekly
 }
 
-export function idsOfAttending(session: Session): string[] {
+export function attendingAttendees(session: Session) {
     if (!session.attendees) {
         return [];
     }
@@ -159,11 +164,15 @@ export function idsOfAttending(session: Session): string[] {
         return session.attendees.filter((attendee: Attendee) => {
             const bookedDate = attendee.bookedAt.toDate(); // Convert Timestamp to Date
             return bookedDate > oneWeekBeforeSession;
-        }).map((attendee: Attendee) => attendee.userId); // Return the user IDs of filtered attendees
+        }).map((attendee: Attendee) => attendee); // Return attendees of filtered attendees
     } else {
-        // If the session is not weekly, simply return all attendee IDs
-        return session.attendees.map((attendee: Attendee) => attendee.userId);
+        // If the session is not weekly, simply return all attendees
+        return session.attendees.map((attendee: Attendee) => attendee);
     }
+}
+
+export function idsOfAttending(session: Session) {
+    return attendingAttendees(session).map(attendee => attendee.userId);
 }
 
 export const isSessionHidden = (session: Session) => {

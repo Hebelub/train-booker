@@ -1,6 +1,6 @@
 'use client'
 
-import { bookSession, getSessionById, unbookSession, isSessionHidden } from '@/utils/sessions';
+import { bookSession, getSessionById, unbookSession, isSessionHidden, attendingAttendees } from '@/utils/sessions';
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
@@ -100,7 +100,7 @@ function SessionPage() {
       // Then try to update on the server
       unbookSession(sessionId, userId ?? '').catch(() => {
         // If the server call fails, revert the changes locally
-        setIsBooked(true);
+        // setIsBooked(true);
         if (session) {
           setSession(session); // Revert to the original session state
         }
@@ -121,7 +121,7 @@ function SessionPage() {
       // Then try to update on the server
       bookSession(sessionId, userId ?? '').catch(() => {
         // If the server call fails, revert the changes locally
-        setIsBooked(false);
+        // setIsBooked(false);
         if (session) {
           setSession(session); // Revert to the original session state
         }
