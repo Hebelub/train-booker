@@ -49,6 +49,8 @@ function SessionPage() {
 
   const availableSlots = session ? session.maxAttendees - idsOfAttending(session).length : 0;
 
+  const sessionHasPassed = session ? SessionHasPassed(session) : false;
+
   const [attendees, setAttendees] = useState<User[]>([]);
   const [attendeesIsLoading, setAttendeesIsLoading] = useState(true);
 
@@ -249,13 +251,11 @@ function SessionPage() {
               </div>
             )}
 
-            <EventStatus startTime={session.startTime} duration={session.duration} />
-
           </CardContent>
 
-          {!SessionHasPassed(session) && (<CardFooter>
+          <CardFooter>
             {userId ? (
-              <Button onClick={handleBookingChange}>
+              <Button onClick={handleBookingChange} disabled={sessionHasPassed}>
                 {isBooked ? <span>Unbook {formatDate(session.startTime)}</span> : <span>Book {formatDate(session.startTime)}</span>}
               </Button>
             ) : (
@@ -268,7 +268,7 @@ function SessionPage() {
                 </div>
               </SignedOut>
             )}
-          </CardFooter>)}
+          </CardFooter>
         </Card>
 
         {/* Admin section */}
