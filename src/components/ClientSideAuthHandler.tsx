@@ -11,8 +11,15 @@ const ClientSideAuthHandler = () => {
 
     useEffect(() => {
         const authenticateFirebase = async () => {
-            const token = await getToken({ template: "integration_firebase" });
-            await signInWithCustomToken(auth, token || "");
+            try {
+                const token = await getToken({ template: "integration_firebase" });
+                if (!token) {
+                    throw new Error('Token is undefined or empty');
+                }
+                await signInWithCustomToken(auth, token);
+            } catch (error) {
+                console.error('Error during Firebase authentication:', error);
+            }
         };
         authenticateFirebase();
     }, [getToken, auth]);
