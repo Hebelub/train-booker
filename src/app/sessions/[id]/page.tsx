@@ -1,14 +1,14 @@
 'use client'
 
-import { bookSession, getSessionById, unbookSession, isSessionHidden, attendingAttendees } from '@/utils/sessions';
+import { bookSession, getSessionById, unbookSession, isSessionHidden } from '@/utils/sessions';
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
 import { Session } from '@/types/Session';
 import { Button } from "@/components/ui/button";
-import { useAuth, useClerk, useUser } from '@clerk/nextjs';
+import { useAuth, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { ClockIcon, LocationIcon, UserIcon, CalendarIcon, CheckIcon, EditIcon, LoadingIcon, EyeIcon } from '@/utils/icons';
-import { convertToHoursAndMinutes, formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
+import { formatDate, formatTime, isUserIdAdmin } from '@/utils/utils';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"

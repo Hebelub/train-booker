@@ -2,12 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import SessionListItem from './SessionListItem';
-import { getSessions, isUpcomingOrToday, isSessionHidden } from '@/utils/sessions';
+import { getSessions, isSessionHidden } from '@/utils/sessions';
 import { Session } from '@/types/Session';
 import SessionList from '@/components/SessionList';
 import { useAuth } from '@clerk/clerk-react';
@@ -19,7 +15,6 @@ import { Toggle } from "@/components/ui/toggle"
 
 function SessionBooker() {
 
-    const [date, setDate] = useState<Date | undefined>(new Date());
     const [sessions, setSessions] = useState<Session[]>([]);
     const [adminSessions, setAdminSessions] = useState<Session[]>([]);
     const [showAdminSessions, setShowAdminSessions] = useState<boolean>(false);

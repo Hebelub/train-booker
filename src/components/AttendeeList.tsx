@@ -1,9 +1,7 @@
 import { User } from "@clerk/nextjs/server";
-import { useEffect, useState } from "react";
 import { LoadingIcon } from "@/utils/icons";
 import { DataTable } from "./attendees/data-table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import Image from "next/image";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 

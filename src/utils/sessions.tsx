@@ -11,8 +11,6 @@ import {
     deleteDoc,
     Timestamp,
     arrayUnion,
-    arrayRemove,
-    where,
 } from "firebase/firestore";
 
 const db = getFirestore(app);

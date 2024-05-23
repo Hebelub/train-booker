@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import SessionListItem from './SessionListItem';
 import { Session } from '@/types/Session';
 import { useAuth } from '@clerk/clerk-react';
-import { Checkbox } from "@/components/ui/checkbox"
 import { idsOfAttending } from '@/utils/sessions';
 import { LoadingIcon } from '@/utils/icons'
 
